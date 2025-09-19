@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Selector } from "@/components/ui/form/Selector";
+import { getLocalStorage } from "@/utils/hooks/getSessionStorage";
 
 const formSchema = z.object({
   schoolName: z.string().nonempty("This field is required"),
@@ -42,6 +43,8 @@ const SchoolAndLearning = () => {
   const { prevValue } = location.state;
   console.log(prevValue);
 
+  const userId = getLocalStorage("userId", null);
+
   const {
     mutate: onboardingMutation,
     data: response,
@@ -51,7 +54,7 @@ const SchoolAndLearning = () => {
     error,
   } = useMutation({
     mutationFn: onboardingRequest,
-    mutationKey: ["onboardingRequest"],
+    mutationKey: ["onboardingRequest", userId],
   });
 
   useEffect(() => {
@@ -74,6 +77,11 @@ const SchoolAndLearning = () => {
   });
 
   const onSubmit = (value: z.infer<typeof formSchema>) => {
+    if (!userId) {
+      toast.error("Signup process incomplete")
+      return
+    }
+
     const pastExam = {
       firstTerm: removeAndReturn(value, "firstTerm"),
       secondTerm: removeAndReturn(value, "secondTerm"),
@@ -81,7 +89,7 @@ const SchoolAndLearning = () => {
     };
     const newValue = { ...value, pastExam, ...prevValue };
     console.log(newValue);
-    onboardingMutation(newValue);
+    onboardingMutation(newValue, userId);
   };
 
   if (isSuccess) {

@@ -22,6 +22,7 @@ import { z } from "zod";
 import { Selector } from "@/components/ui/form/Selector";
 import MainButton from "@/components/ui/MainButton";
 import Spinner from "@/components/ui/Spinner";
+import { setLocalStorage } from "@/utils/hooks/getSessionStorage";
 
 const formSchema = z
   .object({
@@ -77,6 +78,10 @@ const SignUp = () => {
 
   if (isSuccess) {
     toast.success(response.message);
+
+    const userId = response.data.id;
+    setLocalStorage("userId", userId);
+
     const email: string = form.getValues("email");
     setTimeout(() => {
       navigate("../confirmOTP", { state: { email } });
@@ -204,7 +209,7 @@ const SignUp = () => {
             )}
           />
 
-          <Selector name="role" title="Select role" options={roleOptions}/>
+          <Selector name="role" title="Select role" options={roleOptions} />
 
           <div className="text-blue-6 text-[14px] flex gap-2 items-center md:mb-6">
             <Check state={agreed} setState={setAgreed} />

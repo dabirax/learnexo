@@ -42,11 +42,7 @@ type OnboardingCredentials = {
 };
 
 export const loginUserRequest = async ({ email, password }: LoginCredentials) =>
-  await useRequest(
-    "/auth/login",
-    "POST",
-    JSON.stringify({ email, password })
-  );
+  await useRequest("/auth/login", "POST", JSON.stringify({ email, password }));
 
 export const signupUserRequest = async ({
   firstName,
@@ -72,21 +68,13 @@ export const confirmSignUpOTPRequest = async ({
   email,
   otp,
 }: ConfirmOTPCredentials) =>
-  await useRequest(
-    "/auth/verify",
-    "POST",
-    JSON.stringify({ email, otp })
-  );
+  await useRequest("/auth/verify", "POST", JSON.stringify({ email, otp }));
 
 export const confirmOTPRequest = async ({
   email,
   otp,
 }: ConfirmOTPCredentials) =>
-  await useRequest(
-    "/auth/verify-otp",
-    "POST",
-    JSON.stringify({ email, otp })
-  );
+  await useRequest("/auth/verify-otp", "POST", JSON.stringify({ email, otp }));
 
 export const sendOTPToEmailRequest = async ({ email }: SendOTPCredentials) =>
   await useRequest(`/auth/send-otp/${email}`);
@@ -104,9 +92,15 @@ export const resetPasswordRequest = async ({
     })
   );
 
-export const onboardingRequest = async (values: OnboardingCredentials) =>
+export const onboardingRequest = async ({
+  values,
+  userId,
+}: {
+  values: OnboardingCredentials;
+  userId: string;
+}) =>
   await useRequest(
-    "/auth/onboarding",
+    `/auth/onboarding/${userId}`,
     "POST",
     JSON.stringify({
       ...values,
@@ -119,7 +113,6 @@ export const uploadImageRequest = async (file: File) => {
 
   return await useRequest("/upload", "POST", formData);
 };
-
 
 export const assessmentsRequest = async () => {
   return await useRequest("/assessment/Assessment");
