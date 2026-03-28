@@ -19,7 +19,7 @@ const OnboardingLayout: React.FC = () => {
           <span>Back</span>
         </div>
 
-        <div className="flex-1 flex items-center">
+        <div className="flex-1 flex items-center sm:flex-col md:flex-row ">
           <div className="flex-1">
             <Outlet />
           </div>

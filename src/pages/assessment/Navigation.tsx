@@ -306,16 +306,6 @@ const Navigation: React.FC<NavigationProps> = ({
 
   return (
     <div className="flex gap-4 flex-col md:flex-row mlg:flex-col lgd:flex-row justify-between">
-      {idInt < numberOfQuestions && (
-        <div className="md:ml-auto mlg:ml-0 lgd:ml-auto">
-          <MainButton
-            onClick={() => navigate(`../${subject}/${gradeClass}/${idInt + 1}`)}
-          >
-            Next Question
-          </MainButton>
-        </div>
-      )}
-
       {idInt > 1 && (
         <div className="md:mr-auto mlg:mr-0 lgd:mr-auto">
           <MainButton
@@ -323,6 +313,16 @@ const Navigation: React.FC<NavigationProps> = ({
             onClick={() => navigate(`../${subject}/${gradeClass}/${idInt - 1}`)}
           >
             Previous Question
+          </MainButton>
+        </div>
+      )}
+
+      {idInt < numberOfQuestions && (
+        <div className="md:ml-auto mlg:ml-0 lgd:ml-auto">
+          <MainButton
+            onClick={() => navigate(`../${subject}/${gradeClass}/${idInt + 1}`)}
+          >
+            Next Question
           </MainButton>
         </div>
       )}

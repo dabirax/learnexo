@@ -49,16 +49,27 @@ const PersonalAndContactInfo = () => {
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
-  const {
-    mutate: uploadPhoto,
-    data: response,
-    isSuccess,
-    isError,
-    isPending,
-    error,
-  } = useMutation({
+  const { mutate: uploadPhoto, isPending } = useMutation({
     mutationFn: uploadImageRequest,
     mutationKey: ["uploadImageRequest"],
+
+    onSuccess: (response) => {
+      console.log(response);
+      toast.success("Image uploaded");
+      const dobISO = form.getValues("dateOfBirth").toISOString();
+      const prevValue = {
+        ...form.getValues(),
+        dateOfBirth: dobISO,
+        photo: response.data.secure_url,
+      };
+      setTimeout(() => {
+        navigate("../schoolandlearning", { state: { prevValue } });
+      }, 2000);
+    },
+    
+    onError: (error) => {
+      toast.error(error.message);
+    },
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -75,33 +86,39 @@ const PersonalAndContactInfo = () => {
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = async (value: z.infer<typeof formSchema>) => {
-    console.log("Okay");
-    const dobISO = value.dateOfBirth.toISOString();
-    let prevValue = { ...value, dateOfBirth: dobISO };
+  const onSubmit = async () => {
+    // console.log("Okay");
+    // const dobISO = value.dateOfBirth.toISOString();
+    // let prevValue = { ...value, dateOfBirth: dobISO };
 
-    if (selectedImage) {
-      uploadPhoto(selectedImage);
+    // if (selectedImage) {
+    //   uploadPhoto(selectedImage);
 
-      if (isError) {
-        toast.error(error.message);
-        setTimeout(() => {
-          navigate("../schoolandlearning", { state: { prevValue } });
-        }, 2000);
-      }
+    //   if (isError) {
+    //     toast.error(error.message);
+    //     setTimeout(() => {
+    //       navigate("../schoolandlearning", { state: { prevValue } });
+    //     }, 2000);
+    //   }
 
-      if (isSuccess) {
-        console.log(response);
-        toast.success("Image uploaded");
-        prevValue = { ...prevValue, photo: response.data.secure_url };
-        setTimeout(() => {
-          navigate("../schoolandlearning", { state: { prevValue } });
-        }, 2000);
-        return;
-      }
-    } else {
+    //   if (isSuccess) {
+    //     console.log(response);
+    //     toast.success("Image uploaded");
+    //     prevValue = { ...prevValue, photo: response.data.secure_url };
+    //     setTimeout(() => {
+    //       navigate("../schoolandlearning", { state: { prevValue } });
+    //     }, 2000);
+    //     return;
+    //   }
+    // } else {
+    //   toast.error("Choose an image");
+    // }
+    if (!selectedImage) {
       toast.error("Choose an image");
+      return;
     }
+
+    uploadPhoto(selectedImage);
   };
 
   return (

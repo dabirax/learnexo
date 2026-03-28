@@ -88,8 +88,13 @@ const SchoolAndLearning = () => {
       thirdTerm: removeAndReturn(value, "thirdTerm"),
     };
     const newValue = { ...value, pastExam, ...prevValue };
-    console.log(newValue);
-    onboardingMutation(newValue, userId);
+    console.log("newValue", newValue);
+    // onboardingMutation(newValue, userId);
+
+    toast.success("Details saved successfully");
+    setTimeout(() => {
+      navigate("/dashboard");
+    }, 2000);
   };
 
   if (isSuccess) {

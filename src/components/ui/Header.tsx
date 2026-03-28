@@ -8,11 +8,11 @@ import { SidebarInset, SidebarTrigger } from "./sidebar";
 
 const Header = () => {
   return (
-    <div className="w-full flex items-center gap-4 md:gap-6 mx-auto mb-4 border-b sticky top-0 bg-white pb-4">
+    <div className="w-full flex items-center gap-4 md:gap-6 mx-auto mb-4 border-b fixed top-0 bg-white pb-4">
       <div className="flex flex-row-reverse flex-wrap items-center justify-between gap-4">
         <WelcomeText />
 
-        <div className="flex items-center gap-2 mr-auto md:mr-0">
+        <div className="flex items-center  gap-2 mr-auto md:mr-0">
           <SidebarInset>
             <SidebarTrigger className="rounded-md border-gray-4 p-4 w-11 h-11 hover:scale-105 transition duration-300 ease-in-out border-2 md:hidden" />
           </SidebarInset>

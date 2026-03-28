@@ -5,13 +5,14 @@ import { Outlet } from "react-router-dom";
 
 export default function Page() {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-
-      <div className="px-2 w-full">
-        <Header />
-        <Outlet />
-      </div>
-    </SidebarProvider>
+    <div className="relative w-full">
+      <SidebarProvider>
+        <AppSidebar />
+        <div className="w-full max-h-screen mt-24">
+          <Header />
+          <Outlet />
+        </div>
+      </SidebarProvider>
+    </div>
   );
 }

@@ -9,7 +9,7 @@ import { profileCourseProgress } from "@/utils/lib/profile";
 
 const Profile = () => {
   return (
-    <div className="mr-24 pt-12">
+    <div className="mr-24 pt-12 ml-4">
       <div className="flex justify-between w-full items-start pb-4">
         <ImageAndInfo />
 

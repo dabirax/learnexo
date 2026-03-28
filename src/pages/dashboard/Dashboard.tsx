@@ -12,12 +12,12 @@ const Dashboard = () => {
   const recommendations = getLocalStorage("assessment_reccs", null);
 
   return (
-    <div className="">
+    <div className="max-h-screen overflow-scroll">
       {progress <= 100 && (
         <PageLoader state={progress} setState={setProgress} />
       )}
 
-      <div className="flex gap-6 justify-between md:border p-6 rounded-md">
+      <div className="flex gap-6 justify-between p-6">
         <div className="flex flex-col gap-4 w-full">
           <h2 className=" text-lg font-semibold leading-5">Status Updates</h2>
           <div className="flex flex-wrap gap-6 justify-center sm:justify-start">
