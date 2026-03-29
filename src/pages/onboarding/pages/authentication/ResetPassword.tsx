@@ -1,17 +1,38 @@
 import HeaderText from "../../components/HeaderText";
-import MainButton from "../../../../components/ui/MainButton";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useAppForm } from "@/utils/services/form";
-import { resetPasswordRequest } from "@/utils/queries/auth";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { resetPasswordRequest } from "@/utils/queries/auth";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/Spinner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { ArrowRight, ChevronLeft } from "lucide-react";
+
+const schema = z
+  .object({
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+type SchemaType = z.infer<typeof schema>;
 
 const ResetPassword = () => {
   const location = useLocation();
-  const { email } = location.state;
-  console.log(email);
+  const email = location.state?.email;
   const navigate = useNavigate();
 
   const {
@@ -25,15 +46,11 @@ const ResetPassword = () => {
     mutationKey: ["resetPasswordRequest"],
   });
 
-  const resetPasswordForm = useAppForm({
+  const form = useForm<SchemaType>({
+    resolver: zodResolver(schema),
     defaultValues: {
       password: "",
       confirmPassword: "",
-    },
-    onSubmit: ({ value }) => {
-      const { password } = value;
-      console.log(password, email)
-      resetPasswordMutation({ password, email });
     },
   });
 
@@ -45,89 +62,92 @@ const ResetPassword = () => {
 
   useEffect(() => {
     if (isSuccess) {
+      toast.success("Password reset successful!");
       setTimeout(() => {
         navigate("/resetpassword/success");
       }, 2000);
     }
-  }, [isSuccess]);
+  }, [isSuccess, navigate]);
+
+  const onSubmit = (data: SchemaType) => {
+    resetPasswordMutation({ password: data.password, email });
+  };
 
   return (
-    <div>
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
       <HeaderText
-        title="reset password"
-        description="Choose a new password for your account."
+        title="Reset password"
+        description="Choose a new password for your account. Make sure it's something you'll remember."
       />
 
-      <form
-        className="flex flex-col gap-6 mt-25"
-        onSubmit={(event) => {
-          event.preventDefault();
-          resetPasswordForm.handleSubmit();
-        }}
-      >
-        <resetPasswordForm.AppField
-          name="password"
-          validators={{
-            onBlur: ({ value }) => {
-              if (!value) return "Password is required";
-              if (value.length < 6)
-                return "Password must be at least 6 characters";
-              return undefined;
-            },
-          }}
-          children={(field) => (
-            <field.Input
-              placeholder="Password"
-              type="password"
+      <Form {...form}>
+        <form
+          className="flex flex-col gap-6 mt-10"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
               name="password"
-              value={field.state.value}
-              onBlur={field.handleBlur}
-              onChange={(e) => field.handleChange(e.target.value)}
-              error={
-                !field.state.meta.isValid
-                  ? field.state.meta.errors[0]
-                  : undefined
-              }
-              visibility
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="New Password"
+                      type="password"
+                      visibility
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs text-rose-500 ml-1" />
+                </FormItem>
+              )}
             />
-          )}
-        />
 
-        <resetPasswordForm.AppField
-          name="confirmPassword"
-          validators={{
-            onChangeListenTo: ["password"],
-            onChange: ({ value, fieldApi }) => {
-              if (value !== fieldApi.form.getFieldValue("password")) {
-                return "Passwords do not match";
-              }
-              return undefined;
-            },
-          }}
-          children={(field) => (
-            <field.Input
-              placeholder="Confirm password"
-              type="password"
+            <FormField
+              control={form.control}
               name="confirmPassword"
-              value={field.state.value}
-              onBlur={field.handleBlur}
-              onChange={(e) => field.handleChange(e.target.value)}
-              error={
-                !field.state.meta.isValid
-                  ? field.state.meta.errors[0]
-                  : undefined
-              }
-              visibility
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="Confirm New Password"
+                      type="password"
+                      visibility
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs text-rose-500 ml-1" />
+                </FormItem>
+              )}
             />
-          )}
-        />
-        <MainButton submit>
-          {isPending ? <Spinner /> : "Reset Password"}
-        </MainButton>
-        <MainButton white link="/onboarding/auth/login">
-          Back to Login
-        </MainButton>
-      </form>
+          </div>
+
+          <div className="space-y-4 pt-2">
+            <button
+              type="submit"
+              disabled={isPending}
+              className="w-full bg-slate-900 hover:bg-violet-600 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-200 hover:shadow-violet-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50 group transform active:scale-[0.98]"
+            >
+              {isPending ? <Spinner /> : "Reset Password"}
+              {!isPending && (
+                <ArrowRight
+                  className="group-hover:translate-x-1 transition-transform"
+                  size={20}
+                />
+              )}
+            </button>
+
+            <Link
+              to="/onboarding/auth/login"
+              className="w-full py-2 flex items-center justify-center gap-2 text-slate-500 font-semibold hover:text-slate-900 transition-colors text-sm"
+            >
+              <ChevronLeft size={18} />
+              Back to Login
+            </Link>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 };

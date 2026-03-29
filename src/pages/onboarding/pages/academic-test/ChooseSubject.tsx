@@ -19,11 +19,6 @@ const ChooseSubject = () => {
         placeholder="Choose subjects"
         options={subjectsOptions}
       ></Select>
-      {/* <Select
-        name="subjects"
-        placeholder="Rate your understanding of the subject selected"
-        options={subjectsOptions}
-      ></Select> */}
       <MainButton onClick={() => navigate(`../questionnairetest/1`)}>
         Proceed to Questions
       </MainButton>

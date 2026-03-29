@@ -11,9 +11,8 @@ import ChooseSubject from "../pages/onboarding/pages/academic-test/ChooseSubject
 import AcademicTest from "../pages/onboarding/pages/academic-test/AcademicTest";
 import SchoolAndLearning from "../pages/onboarding/pages/academic-test/SchoolAndLearningTest";
 import ConfirmOTP from "@/pages/onboarding/pages/authentication/ConfirmOTP";
-// import { useQuery } from "@tanstack/react-query";
-// import { assessmentsRequest } from "@/utils/queries/auth";
 import QuestionnaireTest from "@/pages/onboarding/pages/academic-test/QuestionnaireTest";
+import LoadingTests from "@/pages/onboarding/pages/academic-test/LoadingTests";
 
 const OnboardingRoutes = () => {
   return (
@@ -43,6 +42,7 @@ const OnboardingRoutes = () => {
         />
         <Route path="schoolandlearning" element={<SchoolAndLearning />} />
         <Route path="choosesubject" element={<ChooseSubject />} />
+        <Route path="preparingtests" element={<LoadingTests />} />
         <Route path="academictest/:id" element={<AcademicTest />} />
         <Route path="questionnairetest/:id" element={<QuestionnaireTest />} />
       </Route>
