@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
-import { sendOTPToEmailRequest } from "@/utils/queries/auth";
 import Spinner from "@/components/ui/Spinner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, ChevronLeft } from "lucide-react";
+import { sendOTPToEmailRequest } from "@/services/onboarding/requests";
 
 const schema = z.object({
   email: z.string().email("Please enter a valid email address"),

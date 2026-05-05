@@ -1,13 +1,11 @@
 import HeaderText from "../../components/HeaderText";
 import BlueTextLink from "../../../../components/ui/BluetextLink";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import { loginUserRequest } from "../../../../utils/queries/auth";
 import Spinner from "../../../../components/ui/Spinner";
 import { toast } from "sonner";
-import { setSessionStorage } from "@/utils/hooks/getSessionStorage";
+import { setSessionStorage } from "@/utils/session";
 import { useEffect } from "react";
-import { ArrowRight} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -19,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useLoginMutation } from "@/services/onboarding/queries";
 
 const loginSchema = z.object({
   email: z.email("Please enter a valid email"),
@@ -35,10 +34,7 @@ const Login = () => {
     isError,
     isSuccess,
     error,
-  } = useMutation({
-    mutationFn: loginUserRequest,
-    mutationKey: ["loginRequest"],
-  });
+  } = useLoginMutation();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),

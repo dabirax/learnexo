@@ -5,7 +5,6 @@ import Question from "../../../../components/ui/Question";
 import { useState } from "react";
 import type { BaseQuestion } from "../../../../utils/types/baseTypes";
 import { useQuery } from "@tanstack/react-query";
-import { questionnairesRequest } from "@/utils/queries/auth";
 import Spinner from "@/components/ui/Spinner";
 import { transformQuestion } from "@/utils/funcs"; // Assumed handleSelect moved to funcs
 import { toast } from "sonner";

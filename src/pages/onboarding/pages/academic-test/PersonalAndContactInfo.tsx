@@ -3,11 +3,8 @@ import PageProgress from "../../../../components/ui/form/PageProgress";
 import HeaderText from "../../components/HeaderText";
 import ImagePlaceholder from "../../components/ImagePlaceholder";
 import { genderOptions, languageOptions } from "../../service";
-import { useState} from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 import { toast } from "sonner";
-import { uploadImageRequest } from "@/utils/queries/auth";
-import Spinner from "@/components/ui/Spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -45,30 +42,19 @@ const formSchema = z.object({
   state: z.string().min(1, "State is required"),
   stateOfOrigin: z.string().min(1, "State of origin is required"),
   language: z.string().min(1, "Please select a language"),
-  photo: z.string().optional(),
+  // photo: z
+  //   .instanceof(File)
+  //   .refine((file) => file.size > 0, "Photo is required")
+  //   .refine((file) => file.size <= 2 * 1024 * 1024, "Max 2MB file size")
+  //   .refine(
+  //     (file) => ["image/jpeg", "image/png"].includes(file.type),
+  //     "Only JPG/PNG allowed",
+  //   ),
 });
 
 const PersonalAndContactInfo = () => {
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-
-  const { mutate: uploadPhoto, isPending } = useMutation({
-    mutationFn: uploadImageRequest,
-    onSuccess: (response) => {
-      toast.success("Profile photo uploaded!");
-      const values = form.getValues();
-      const prevValue = {
-        ...values,
-        dateOfBirth: values.dateOfBirth.toISOString(),
-        photo: response.data.secure_url,
-      };
-      setTimeout(
-        () => navigate("../schoolandlearning", { state: { prevValue } }),
-        1500,
-      );
-    },
-    onError: (error: any) => toast.error(error.message),
-  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -80,16 +66,26 @@ const PersonalAndContactInfo = () => {
       state: "",
       stateOfOrigin: "",
       language: "",
-      photo: "",
+      // photo: undefined,
     },
   });
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     if (!selectedImage) {
       toast.error("Please upload a profile photo to continue");
       return;
     }
-    uploadPhoto(selectedImage);
+
+    const prevValue = {
+      ...data,
+      photo: selectedImage,
+      dateOfBirth: data.dateOfBirth.toISOString(),
+    };
+
+    setTimeout(
+      () => navigate("../schoolandlearning", { state: { prevValue } }),
+      1500,
+    );
   };
 
   return (
@@ -241,16 +237,14 @@ const PersonalAndContactInfo = () => {
 
           <button
             type="submit"
-            disabled={isPending}
+            // disabled={isPending}
             className="w-full bg-slate-900 hover:bg-violet-600 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-200 hover:shadow-violet-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50 group transform active:scale-[0.98]"
           >
-            {isPending ? <Spinner /> : "Save and Continue"}
-            {!isPending && (
-              <ArrowRight
-                className="group-hover:translate-x-1 transition-transform"
-                size={20}
-              />
-            )}
+            Save and Continue
+            <ArrowRight
+              className="group-hover:translate-x-1 transition-transform"
+              size={20}
+            />
           </button>
         </form>
       </Form>

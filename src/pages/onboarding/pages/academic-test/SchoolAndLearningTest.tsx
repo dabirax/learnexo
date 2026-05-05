@@ -8,7 +8,6 @@ import {
   learningStyleOptions,
 } from "../../service";
 import { useMutation } from "@tanstack/react-query";
-import { onboardingRequest } from "@/utils/queries/auth";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/Spinner";
@@ -24,8 +23,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Selector } from "@/components/ui/form/Selector";
-import { getLocalStorage } from "@/utils/hooks/getSessionStorage";
+import { getLocalStorage } from "@/utils/session";
 import { ArrowRight, GraduationCap, School } from "lucide-react";
+import { onboardingRequest } from "@/services/onboarding/requests";
 
 const formSchema = z.object({
   schoolName: z.string().min(1, "School name is required"),
@@ -41,7 +41,7 @@ const SchoolAndLearning = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const prevValue = location.state?.prevValue || {};
-  const userId = getLocalStorage("userId", null);
+  const userId = getLocalStorage("userId");
 
   const {
     mutate: onboardingMutation,
@@ -50,8 +50,8 @@ const SchoolAndLearning = () => {
     isSuccess,
     error,
   } = useMutation({
-    mutationFn: (data: any) => onboardingRequest({data, userId}),
-    mutationKey: ["onboardingRequest", userId],
+    mutationFn: (data: any) => onboardingRequest({ data }),
+    mutationKey: ["onboardingRequest"],
   });
 
   const onboardingForm = useForm<z.infer<typeof formSchema>>({
@@ -68,6 +68,8 @@ const SchoolAndLearning = () => {
   });
 
   useEffect(() => {
+    console.log(prevValue);
+
     if (isError) toast.error(error.message);
   }, [isError, error]);
 
@@ -84,7 +86,13 @@ const SchoolAndLearning = () => {
     };
 
     const newValue = { ...value, pastExam, ...prevValue };
-    onboardingMutation(newValue);
+
+    const formData = new FormData();
+    Object.entries(newValue).forEach(([key, val]) => {
+      formData.append(key, val);
+    });
+
+    onboardingMutation(formData);
   };
 
   if (isSuccess) {
@@ -125,7 +133,7 @@ const SchoolAndLearning = () => {
                   <FormControl>
                     <Input placeholder="Current School Name" {...field} />
                   </FormControl>
-                  <FormMessage className="text-xs text-rose-500 ml-1" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -154,7 +162,7 @@ const SchoolAndLearning = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-xs text-rose-500 ml-1" />
+                  <FormMessage />
                 </FormItem>
               )}
             />

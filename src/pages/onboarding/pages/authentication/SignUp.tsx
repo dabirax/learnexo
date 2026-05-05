@@ -4,8 +4,6 @@ import BlueTextLink from "@/components/ui/BluetextLink";
 import { roleOptions } from "../../service";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { signupUserRequest } from "@/utils/queries/auth";
 import { toast } from "sonner";
 import {
   Form,
@@ -20,14 +18,14 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Selector } from "@/components/ui/form/Selector";
 import Spinner from "../../../../components/ui/Spinner";
-import { setLocalStorage } from "@/utils/hooks/getSessionStorage";
 import { ArrowRight } from "lucide-react";
+import { useSignupUserMutation } from "@/services/onboarding/queries";
 
 const formSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
-    email: z.string().email("Invalid email"),
+    email: z.email("Invalid email"),
     password: z.string().min(8, "Password must be at least 8 characters long"),
     confirmPassword: z
       .string()
@@ -50,10 +48,7 @@ const SignUp = () => {
     isError,
     isSuccess,
     error,
-  } = useMutation({
-    mutationFn: signupUserRequest,
-    mutationKey: ["signupRequest"],
-  });
+  } = useSignupUserMutation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
@@ -71,24 +66,29 @@ const SignUp = () => {
     if (isError) {
       toast.error(error.message);
     }
-  }, [isError, error]);
 
-  if (isSuccess) {
-    toast.success(response.message);
-    const userId = response.data.id;
-    setLocalStorage("userId", userId);
-    const email: string = form.getValues("email");
-    setTimeout(() => {
-      navigate("../confirmOTP", { state: { email } });
-    }, 2000);
-  }
+    if (isSuccess) {
+      toast.success(response.message);
+
+      const userId = response.data.userId;
+      sessionStorage.setItem("userId", userId);
+
+      const email = form.getValues("email");
+
+      setTimeout(() => {
+        navigate("/onboarding/auth/confirm-otp", { state: { email } });
+      }, 2000);
+    }
+  }, [isError, error, isSuccess]);
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     if (!agreed) {
       toast.warning("Please agree to the Terms and Conditions");
       return;
     }
-    signupMutation(data);
+
+    const { confirmPassword, ...signupData } = data;
+    signupMutation(signupData);
   };
 
   return (

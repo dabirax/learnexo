@@ -9,7 +9,7 @@ import {
   gradeOptions,
   learningStyleOptions,
 } from "../pages/onboarding/service";
-import { useAppForm } from "@/utils/services/form";
+import { useAppForm } from "@/services/form";
 import { useMutation } from "@tanstack/react-query";
 import { onboardingRequest } from "@/utils/queries/auth";
 import { useEffect } from "react";

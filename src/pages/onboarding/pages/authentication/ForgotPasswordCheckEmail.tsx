@@ -8,10 +8,10 @@ import {
 } from "@/components/ui/input-otp";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { confirmOTPRequest } from "@/utils/queries/auth";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/Spinner";
 import { ArrowRight, RefreshCw, ChevronLeft } from "lucide-react";
+import { confirmOTPRequest } from "@/services/onboarding/requests";
 
 const CheckEmail = () => {
   const location = useLocation();

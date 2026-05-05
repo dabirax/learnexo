@@ -1,7 +1,6 @@
 import HeaderText from "../../components/HeaderText";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { resetPasswordRequest } from "@/utils/queries/auth";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/Spinner";
@@ -17,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, ChevronLeft } from "lucide-react";
+import { resetPasswordRequest } from "@/services/onboarding/requests";
 
 const schema = z
   .object({

@@ -21,7 +21,7 @@ const OnboardingRoutes = () => {
         <Route index element={<Navigate to="login" replace />} />
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<SignUp />} />
-        <Route path="confirmOTP" element={<ConfirmOTP />} />
+        <Route path="confirm-otp" element={<ConfirmOTP />} />
         <Route path="forgotpassword" element={<ForgotPassword />} />
         <Route path="forgotpassword/checkemail" element={<CheckEmail />} />
         <Route path="resetpassword" element={<ResetPassword />} />
