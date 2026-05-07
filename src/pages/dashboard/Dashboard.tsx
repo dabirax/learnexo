@@ -5,7 +5,7 @@ import { activityFeed } from "../../utils/lib/dashboard";
 import ActivitiesTable from "@/components/ui/dashboard/AssessmentsTable";
 import PageLoader from "@/components/ui/profile/PageLoader";
 import { useState } from "react";
-import { getLocalStorage } from "@/utils/hooks/getSessionStorage";
+import { getLocalStorage } from "@/utils/session";
 
 const Dashboard = () => {
   const [progress, setProgress] = useState(20);
@@ -45,7 +45,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <ActivitiesTable recommendations={recommendations}/>
+          <ActivitiesTable recommendations={recommendations} />
           <Activities title="Activity Feed" activities={activityFeed} />
         </div>
       </div>
