@@ -11,7 +11,7 @@ export const useRequest = async (
 ) => {
   console.log("Request sent in module");
 
-  let headers: Headers = {
+  const headers: Headers = {
     "Access-Control-Allow-Credentials": "true",
     Authorization: `Bearer ${getSessionStorage("accessToken", "")}`,
   };
@@ -34,7 +34,7 @@ export const useRequest = async (
   if (method !== "GET") requestOptions = { ...requestOptions, body };
 
   try {
-    let res = await fetch(`${api_base_url}${path}`, requestOptions);
+    const res = await fetch(`${api_base_url}${path}`, requestOptions);
     const data = await res.json();
 
     if (!res.ok) {

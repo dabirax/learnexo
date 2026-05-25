@@ -38,9 +38,9 @@ const formSchema = z.object({
 
 const SchoolAndLearning = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { prevValue } = location.state;
-  console.log(prevValue);
+  // const location = useLocation();
+  // const { prevValue } = location.state;
+  // console.log(prevValue);
 
   const {
     mutate: onboardingMutation,
@@ -169,7 +169,7 @@ const SchoolAndLearning = () => {
             title="Third term grade"
             options={gradeOptions}
           />
-          <MainButton submit>
+          <MainButton /*submit*/ onClick={()=>{navigate("../choosesubject");}}>
             {isPending ? <Spinner /> : "Proceed to take Test"}
           </MainButton>
         </form>

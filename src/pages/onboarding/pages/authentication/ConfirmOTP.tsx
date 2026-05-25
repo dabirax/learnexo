@@ -73,10 +73,15 @@ const ConfirmOTP = () => {
       <div className="flex flex-col gap-6">
         <MainButton
           onClick={() => {
-            confirmOTPMutation({ otp: "000000", email });
+            if (otpValue.length !== 6) {
+              toast.error("Please enter a valid 6-digit OTP");
+              return;
+            }
+
+            confirmOTPMutation({ otp: otpValue, email });
           }}
         >
-          {isPending ? <Spinner /> : "Send OTP"}
+          {isPending ? <Spinner /> : "Verify OTP"}
         </MainButton>
       </div>
     </div>

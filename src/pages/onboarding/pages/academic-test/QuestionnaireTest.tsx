@@ -50,7 +50,7 @@ const QuestionnaireTest = () => {
   const numberOfQuestions = questions.data.length;
   console.log(questions, numberOfQuestions, idInt);
 
-  let question = questions.data
+  const question = questions.data
     .map(transformQuestion)
     .find((question: BaseQuestion) => question.index - 10 === idInt);
 

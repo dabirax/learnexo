@@ -239,7 +239,7 @@ const PersonalAndContactInfo = () => {
             options={languageOptions}
           />
 
-          <MainButton submit>
+          <MainButton /*submit*/ onClick={() => { navigate("../schoolandlearning") }}>
             {isPending ? <Spinner /> : "Save and Continue"}
           </MainButton>
         </form>

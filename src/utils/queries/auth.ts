@@ -73,7 +73,7 @@ export const confirmSignUpOTPRequest = async ({
   otp,
 }: ConfirmOTPCredentials) =>
   await useRequest(
-    "/auth/verify",
+    "/auth/verify-otp",
     "POST",
     JSON.stringify({ email, otp })
   );
