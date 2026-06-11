@@ -6,9 +6,6 @@ import Question from "../../../../components/ui/Question";
 import { useState } from "react";
 import type { BaseQuestion } from "../../../../utils/types/baseTypes";
 import MainButton from "../../../../components/ui/MainButton";
-// import { useQuery } from "@tanstack/react-query";
-// import { assessmentsRequest } from "@/utils/queries/auth";
-// import Spinner from "@/components/ui/Spinner";
 import { transformQuestion } from "@/utils/funcs";
 import { toast } from "sonner";
 import { academicQuestions } from "@/utils/lib/academictest";
@@ -19,44 +16,11 @@ const AcademicTest = () => {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState<Record<number, string>>({});
 
-  // const {
-  //   data: questions,
-  //   isPending,
-  //   isSuccess,
-  //   error,
-  // } = useQuery({
-  //   queryKey: ["academicquestions"],
-  //   queryFn: assessmentsRequest,
-  //   staleTime: 1000 * 60 * 5,
-  // });
-
-  // if (!id || isNaN(idInt)) {
-  //   return <div>Question not found</div>;
-  // }
-
-  // if (isPending) {
-  //   return (
-  //     <div>
-  //       <Spinner />
-  //     </div>
-  //   );
-  // }
-
-  // if (error) return <div>An error has occurred: {error.message}</div>;
-
-  // if (!isSuccess || !questions.data || !Array.isArray(questions.data)) {
-  //   return <div>No questions found</div>;
-  // }
-
   const numberOfQuestions = academicQuestions.data.length;
-  console.log(academicQuestions, numberOfQuestions, idInt);
 
   const mapOptionsObjectToArray = (
     optionsObj: Record<string, string>
-  ): string[] => {
-    // Ensure order: a, b, c, d, e
-    return ["a", "b", "c", "d", "e"].map((key) => optionsObj[key]);
-  };
+  ): string[] => ["a", "b", "c", "d", "e"].map((key) => optionsObj[key]);
 
   const questions = academicQuestions.data.map((q) => ({
     ...q,
@@ -116,7 +80,6 @@ const AcademicTest = () => {
             <MainButton
               onClick={() => {
                 toast.warning("You cannot edit your answers after this step");
-                // submit answers
                 setTimeout(() => {
                   navigate(`../questionnairetest/${numberOfQuestions + 1}`);
                 }, 2000);

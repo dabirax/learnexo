@@ -1,19 +1,17 @@
-import { getSessionStorage } from "./getSessionStorage";
+import { getSessionStorage } from "../session";
 import type { Headers } from "../types/baseTypes";
 
 const api_base_url = import.meta.env.VITE_API_BASE_URL;
-console.log("API Base URL:", import.meta.env.VITE_API_BASE_URL);
 
 export const useRequest = async (
   path: string,
   method = "GET",
-  body?: string | FormData
+  body?: string | FormData,
 ) => {
-  console.log("Request sent in module");
 
   const headers: Headers = {
     "Access-Control-Allow-Credentials": "true",
-    Authorization: `Bearer ${getSessionStorage("accessToken", "")}`,
+    Authorization: `Bearer ${getSessionStorage("accessToken")}`,
   };
 
   if (!(body instanceof FormData)) {
@@ -40,14 +38,14 @@ export const useRequest = async (
     if (!res.ok) {
       throw new Error(
         data.message ||
-          `Something went wrong. {${res.statusText} - ${res.status}}`
+          `Something went wrong. {${res.statusText} - ${res.status}}`,
       );
     }
 
     return data;
   } catch (error) {
-      if (error instanceof Error) {
-        console.error("error somewhere: ", error);
+    if (error instanceof Error) {
+      console.error("error somewhere: ", error);
       throw new Error(error.message);
     }
     throw new Error(String(error));

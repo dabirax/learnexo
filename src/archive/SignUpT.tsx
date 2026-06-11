@@ -4,7 +4,7 @@ import BlueTextLink from "@/components/ui/BluetextLink";
 import { roleOptions } from "../pages/onboarding/service";
 import { Link, useNavigate } from "react-router-dom";
 import FormRow from "@/components/ui/form/FormRow";
-import { useAppForm } from "@/utils/services/form";
+import { useAppForm } from "@/services/form";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { signupUserRequest } from "@/utils/queries/auth";
@@ -87,7 +87,6 @@ const SignUp = () => {
                 return undefined;
               },
             }}
-            
             children={(field) => (
               <field.Input
                 placeholder="First name"

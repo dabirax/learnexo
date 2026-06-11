@@ -1,14 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import PageProgress from "../../../../components/ui/form/PageProgress";
-import MainButton from "../../../../components/ui/MainButton";
 import HeaderText from "../../components/HeaderText";
 import ImagePlaceholder from "../../components/ImagePlaceholder";
 import { genderOptions, languageOptions } from "../../service";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { uploadImageRequest } from "@/utils/queries/auth";
-import Spinner from "@/components/ui/Spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -22,226 +17,181 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Selector } from "@/components/ui/form/Selector";
-import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { MapPin, User, ArrowRight } from "lucide-react";
+
+const today = new Date().toISOString().split("T")[0];
 
 const formSchema = z.object({
-  dateOfBirth: z.date().refine((val) => val !== null && val !== undefined, {
-    message: "Date of birth is required",
-  }),
-  gender: z.string().nonempty("This field is required"),
-  residentialAddress: z.string().nonempty("This field is required"),
-  town: z.string().nonempty("This field is required"),
-  state: z.string().nonempty("This field is required"),
-  stateOfOrigin: z.string().nonempty("This field is required"),
-  language: z.string().nonempty("This field is required"),
-  photo: z.string(),
+  dateOfBirth: z
+    .string()
+    .min(1, "Date of birth is required")
+    .refine((v) => !isNaN(Date.parse(v)), "Invalid date"),
+  gender: z.string().min(1, "Please select your gender"),
+  residentialAddress: z.string().min(1, "Address is required"),
+  town: z.string().min(1, "Town is required"),
+  state: z.string().min(1, "State is required"),
+  stateOfOrigin: z.string().min(1, "State of origin is required"),
+  language: z.string().min(1, "Please select a language"),
 });
 
 const PersonalAndContactInfo = () => {
   const navigate = useNavigate();
-
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
-  const {
-    mutate: uploadPhoto,
-    data: response,
-    isSuccess,
-    isError,
-    isPending,
-    error,
-  } = useMutation({
-    mutationFn: uploadImageRequest,
-    mutationKey: ["uploadImageRequest"],
-  });
-
   const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      dateOfBirth: new Date(),
+      dateOfBirth: "",
       gender: "",
       residentialAddress: "",
       town: "",
       state: "",
       stateOfOrigin: "",
       language: "",
-      photo: "",
     },
-    resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = async (value: z.infer<typeof formSchema>) => {
-    console.log("Okay");
-    const dobISO = value.dateOfBirth.toISOString();
-    let prevValue = { ...value, dateOfBirth: dobISO };
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    const prevValue = {
+      ...data,
+      ...(selectedImage ? { photo: selectedImage } : {}),
+    };
 
-    if (selectedImage) {
-      uploadPhoto(selectedImage);
-
-      if (isError) {
-        toast.error(error.message);
-        setTimeout(() => {
-          navigate("../schoolandlearning", { state: { prevValue } });
-        }, 2000);
-      }
-
-      if (isSuccess) {
-        console.log(response);
-        toast.success("Image uploaded");
-        prevValue = { ...prevValue, photo: response.data.secure_url };
-        setTimeout(() => {
-          navigate("../schoolandlearning", { state: { prevValue } });
-        }, 2000);
-        return;
-      }
-    } else {
-      toast.error("Choose an image");
-    }
+    navigate("../schoolandlearning", { state: { prevValue } });
   };
 
   return (
-    <div className="flex flex-col gap-10">
-      <PageProgress totalSteps={2} step={1} />
-      <HeaderText
-        title="Personal & Contact Information"
-        description="Tell us about yourself so we can personalize your learning experience!"
-      />
-      <ImagePlaceholder setSelected={setSelectedImage} />
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
+      <div className="space-y-6">
+        <PageProgress totalSteps={2} step={1} />
+        <HeaderText
+          title="Personal Information"
+          description="Tell us about yourself so we can personalize your learning experience!"
+        />
+      </div>
+
+      <div className="flex flex-col items-center justify-center p-6 bg-slate-50/50 rounded-[2.5rem] border-2 border-dashed border-slate-200">
+        <ImagePlaceholder setSelected={setSelectedImage} />
+        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-4">
+          Upload Student Photo
+        </p>
+      </div>
 
       <Form {...form}>
         <form
-          className="w-full space-y-6 max-w-md mx-auto"
+          className="w-full space-y-10"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          <FormField
-            control={form.control}
-            name="dateOfBirth"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Date of Birth</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
+          <div className="space-y-5">
+            <div className="flex items-center gap-2 text-violet-600">
+              <User size={18} />
+              <h3 className="text-sm font-bold uppercase tracking-widest">
+                Identity
+              </h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="dateOfBirth"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                      Date of Birth
+                    </FormLabel>
                     <FormControl>
-                      <Button
-                        variant="outline"
-                        className={`w-full py-5 pl-3 text-left ${
-                          !field.value && "text-muted-foreground"
-                        }`}
-                      >
-                        {field.value
-                          ? format(field.value, "PPP")
-                          : "Date of birth"}
-                      </Button>
+                      <Input
+                        type="date"
+                        max={today}
+                        min="1990-01-01"
+                        {...field}
+                      />
                     </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange} 
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    <FormMessage className="text-xs text-rose-500 ml-1" />
+                  </FormItem>
+                )}
+              />
+              <Selector name="gender" title="Gender" options={genderOptions} />
+            </div>
+            <Selector
+              name="language"
+              title="Preferred Language"
+              options={languageOptions}
+            />
+          </div>
 
-          <Selector
-            name="gender"
-            title="Select gender"
-            options={genderOptions}
-          />
+          {/* Section: Location */}
+          <div className="space-y-5">
+            <div className="flex items-center gap-2 text-emerald-600">
+              <MapPin size={18} />
+              <h3 className="text-sm font-bold uppercase tracking-widest">
+                Location Details
+              </h3>
+            </div>
 
-          <FormField
-            control={form.control}
-            name="residentialAddress"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Residential address"
-                    className=""
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="residentialAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Residential Address" {...field} />
+                  </FormControl>
+                  <FormMessage className="text-xs text-rose-500 ml-1" />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="town"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Town"
-                    className=""
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="town"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="Town / City" {...field} />
+                    </FormControl>
+                    <FormMessage className="text-xs text-rose-500 ml-1" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="state"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="State" {...field} />
+                    </FormControl>
+                    <FormMessage className="text-xs text-rose-500 ml-1" />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="stateOfOrigin"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="State of Origin" {...field} />
+                  </FormControl>
+                  <FormMessage className="text-xs text-rose-500 ml-1" />
+                </FormItem>
+              )}
+            />
+          </div>
 
-          <FormField
-            control={form.control}
-            name="state"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="State"
-                    className=""
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="stateOfOrigin"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="State of origin"
-                    className=""
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Selector
-            name="language"
-            title="Select language"
-            options={languageOptions}
-          />
-
-          <MainButton /*submit*/ onClick={() => { navigate("../schoolandlearning") }}>
-            {isPending ? <Spinner /> : "Save and Continue"}
-          </MainButton>
+          <button
+            type="submit"
+            className="w-full bg-slate-900 hover:bg-violet-600 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-200 hover:shadow-violet-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50 group transform active:scale-[0.98]"
+          >
+            Save and Continue
+            <ArrowRight
+              className="group-hover:translate-x-1 transition-transform"
+              size={20}
+            />
+          </button>
         </form>
       </Form>
     </div>

@@ -1,59 +1,348 @@
-import { Button } from "@/components/ui/button";
-import { EditIcon } from "lucide-react";
-import ImageAndInfo from "@/components/ui/profile/ImageAndInfo";
+import { useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { makeRequest } from "@/services/api";
+import { getSessionStorage, setSessionStorage } from "@/utils/session";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import BasicInfo from "@/components/ui/profile/BasicInfo";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  BookOpen,
+  Brain,
+  Check,
+  EditIcon,
+  GraduationCap,
+  User,
+  X,
+} from "lucide-react";
 import CourseProgress from "@/components/ui/dashboard/CourseProgress";
 import { profileCourseProgress } from "@/utils/lib/profile";
-// import cours
+
+const editSchema = z.object({
+  firstName: z.string().min(1, "Required"),
+  lastName: z.string().min(1, "Required"),
+  email: z.string().email("Invalid email"),
+});
+
+type OnboardingData = {
+  dateOfBirth?: string;
+  studentClass?: string;
+  gender?: string;
+  stateOfOrigin?: string;
+  residentialAddress?: string;
+  town?: string;
+  state?: string;
+  schoolName?: string;
+  schoolAddress?: string;
+  language?: string;
+  photo?: string | null;
+  learningProfile?: { learningStyle?: string };
+  pastExam?: { firstTerm?: string; secondTerm?: string; thirdTerm?: string };
+};
+
+const gradeLabel: Record<string, string> = {
+  A: "75% – 100%",
+  B: "65% – 74%",
+  C: "60% – 64%",
+  D: "45% – 49%",
+  E: "40% – 44%",
+  F: "0% – 39%",
+  nil: "Nil",
+};
+
+const apiOrigin = (import.meta.env.VITE_API_BASE_URL as string).replace(
+  /\/api\/v1\/?$/,
+  "",
+);
+
+const formatDate = (value?: string) => {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (isNaN(date.getTime())) return "—";
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
 
 const Profile = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  const firstName: string = getSessionStorage("userFirstName") ?? "";
+  const lastName: string = getSessionStorage("userLastName") ?? "";
+  const email: string = getSessionStorage("userEmail") ?? "";
+  const role: string = getSessionStorage("userRole") ?? "";
+  const userId: string = getSessionStorage("userId") ?? "";
+
+  const { data: onboardingData, isLoading } = useQuery({
+    queryKey: ["userProfile", userId],
+    queryFn: () => makeRequest<{ data: OnboardingData }>(`/auth/profile`),
+    enabled: !!userId,
+    retry: false,
+  });
+
+  const { mutate: updateProfile, isPending } = useMutation({
+    mutationFn: (values: z.infer<typeof editSchema>) =>
+      makeRequest(`/auth/profile`, "PATCH", values),
+    onSuccess: (_, values) => {
+      setSessionStorage("userFirstName", values.firstName);
+      setSessionStorage("userLastName", values.lastName);
+      setSessionStorage("userEmail", values.email);
+      toast.success("Profile updated!");
+      setIsEditing(false);
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+
+  const form = useForm<z.infer<typeof editSchema>>({
+    resolver: zodResolver(editSchema),
+    defaultValues: { firstName, lastName, email },
+  });
+
+  const handleEditOpen = () => {
+    form.reset({ firstName, lastName, email });
+    setIsEditing(true);
+  };
+
+  const onboarding = (onboardingData as { data?: OnboardingData } | undefined)
+    ?.data;
+  const initials =
+    `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "?";
+  const fullName = `${firstName} ${lastName}`.trim();
+  const photoUrl = onboarding?.photo ? `${apiOrigin}${onboarding.photo}` : undefined;
+
   return (
-    <div className="mr-24 pt-12">
-      <div className="flex justify-between w-full items-start pb-4">
-        <ImageAndInfo />
+    <div className="max-w-4xl mx-auto pt-10 px-6 pb-20">
+      {/* Header row */}
+      <div className="flex justify-between w-full items-start pb-6">
+        <div className="flex items-center gap-5">
+          <Avatar className="w-20 h-20 rounded-full border-2 border-violet-100">
+            {photoUrl && <AvatarImage src={photoUrl} alt={fullName} />}
+            <AvatarFallback className="bg-violet-100 text-violet-700 text-2xl font-bold">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="space-y-1">
+            <h2 className="text-xl font-bold text-slate-900">{fullName || "—"}</h2>
+            <p className="text-sm font-medium text-violet-600 capitalize">{role || "Student"}</p>
+            <p className="text-sm text-slate-400">{email}</p>
+          </div>
+        </div>
 
-        <Button>
-          <EditIcon />
-          Edit Profile
-        </Button>
+        {!isEditing ? (
+          <Button variant="outline" className="gap-2" onClick={handleEditOpen}>
+            <EditIcon size={14} />
+            Edit Profile
+          </Button>
+        ) : (
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsEditing(false)}
+            >
+              <X size={14} />
+            </Button>
+            <Button
+              size="sm"
+              className="gap-2 bg-violet-600 hover:bg-violet-700 text-white"
+              disabled={isPending}
+              onClick={form.handleSubmit((v) => updateProfile(v))}
+            >
+              <Check size={14} />
+              Save
+            </Button>
+          </div>
+        )}
       </div>
+
       <Separator />
 
-      <div className="py-12 flex justify-between">
-        <BasicInfo />
-        <CourseProgress
-          title="Progress Overview"
-          courses={profileCourseProgress}
-        />
-      </div>
-      <Separator />
+      {/* Edit form */}
+      {isEditing && (
+        <div className="py-8 space-y-4">
+          <h3 className="text-sm font-bold uppercase tracking-widest text-violet-600">
+            Edit Details
+          </h3>
+          <Form {...form}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="First name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="Last name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormControl>
+                      <Input placeholder="Email address" type="email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </Form>
+          <Separator className="mt-4" />
+        </div>
+      )}
 
-      <div className="text-gray-6 leading-3.5 py-6 flex justify-between">
-        <p>
-          <span className="font-semibold leading-5 text-black">
-            Account type
-          </span>
-          : Free
-        </p>
-        <p>
-          <span className="font-semibold leading-5 text-black">
-            Learning Style
-          </span>
-          : Visual, Auditory
-        </p>
-      </div>
-      <Separator />
+      {/* Info grid */}
+      <div className="py-8 flex flex-wrap gap-12">
+        {/* Personal info */}
+        <div className="min-w-48">
+          <div className="flex items-center gap-2 text-amber-600 mb-4">
+            <User size={15} />
+            <h3 className="text-sm font-bold uppercase tracking-widest">
+              Personal Info
+            </h3>
+          </div>
+          {isLoading ? (
+            <p className="text-sm text-slate-400">Loading…</p>
+          ) : (
+            <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm">
+              <p className="text-slate-500">Date of Birth:</p>
+              <p className="font-medium">{formatDate(onboarding?.dateOfBirth)}</p>
+              <p className="text-slate-500">Gender:</p>
+              <p className="font-medium capitalize">{onboarding?.gender ?? "—"}</p>
+              <p className="text-slate-500">State of Origin:</p>
+              <p className="font-medium">{onboarding?.stateOfOrigin ?? "—"}</p>
+              <p className="text-slate-500">Town:</p>
+              <p className="font-medium">{onboarding?.town ?? "—"}</p>
+              <p className="text-slate-500">Address:</p>
+              <p className="font-medium">{onboarding?.residentialAddress ?? "—"}</p>
+            </div>
+          )}
+        </div>
 
-      <div className="py-6">
-        <div className="flex gap-3 items-start">
-          <p className="font-semibold leading-5 text-black">Interests:</p>
-          <p className="text-gray-6 leading-5 wrap-normal max-w-80">
-            Mathematics, Music, AI & Machine Learning, English, Economics,
-            Leadership
-          </p>
+        {/* Academic info */}
+        <div className="min-w-48">
+          <div className="flex items-center gap-2 text-violet-600 mb-4">
+            <BookOpen size={15} />
+            <h3 className="text-sm font-bold uppercase tracking-widest">
+              Academic Info
+            </h3>
+          </div>
+          {isLoading ? (
+            <p className="text-sm text-slate-400">Loading…</p>
+          ) : (
+            <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm">
+              <p className="text-slate-500">Class:</p>
+              <p className="font-medium">{onboarding?.studentClass ?? "—"}</p>
+              <p className="text-slate-500">School:</p>
+              <p className="font-medium">{onboarding?.schoolName ?? "—"}</p>
+              <p className="text-slate-500">School Address:</p>
+              <p className="font-medium">{onboarding?.schoolAddress ?? "—"}</p>
+              <p className="text-slate-500">State:</p>
+              <p className="font-medium">{onboarding?.state ?? "—"}</p>
+              <p className="text-slate-500">Language:</p>
+              <p className="font-medium capitalize">
+                {onboarding?.language ?? "—"}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Learning profile */}
+        <div className="min-w-48">
+          <div className="flex items-center gap-2 text-emerald-600 mb-4">
+            <Brain size={15} />
+            <h3 className="text-sm font-bold uppercase tracking-widest">
+              Learning Profile
+            </h3>
+          </div>
+          {isLoading ? (
+            <p className="text-sm text-slate-400">Loading…</p>
+          ) : (
+            <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm">
+              <p className="text-slate-500">Style:</p>
+              <p className="font-medium capitalize">
+                {onboarding?.learningProfile?.learningStyle ?? "—"}
+              </p>
+              <p className="text-slate-500">Account:</p>
+              <p className="font-medium">Free</p>
+            </div>
+          )}
+        </div>
+
+        {/* Progress */}
+        <div className="flex-1 min-w-56">
+          <CourseProgress
+            title="Progress Overview"
+            courses={profileCourseProgress}
+          />
         </div>
       </div>
+
+      <Separator />
+
+      {/* Past exam grades */}
+      {onboarding?.pastExam && (
+        <>
+          <div className="py-8">
+            <div className="flex items-center gap-2 text-slate-500 mb-4">
+              <GraduationCap size={15} />
+              <h3 className="text-sm font-bold uppercase tracking-widest">
+                Past Exam Grades
+              </h3>
+            </div>
+            <div className="flex gap-4 flex-wrap">
+              {[
+                { label: "1st Term", key: "firstTerm" },
+                { label: "2nd Term", key: "secondTerm" },
+                { label: "3rd Term", key: "thirdTerm" },
+              ].map(({ label, key }) => {
+                const raw = onboarding.pastExam?.[key as keyof typeof onboarding.pastExam];
+                return (
+                  <div
+                    key={key}
+                    className="bg-slate-50 border border-slate-100 rounded-2xl px-8 py-5 text-center min-w-28"
+                  >
+                    <p className="text-xs text-slate-400 mb-2">{label}</p>
+                    <p className="text-base font-bold text-slate-900">
+                      {raw ? (gradeLabel[raw] ?? raw) : "—"}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <Separator />
+        </>
+      )}
     </div>
   );
 };

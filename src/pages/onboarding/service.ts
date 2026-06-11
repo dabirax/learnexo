@@ -25,65 +25,14 @@ export const subjectsOptions: Option[] = [
   { value: "english", label: "English" },
 ];
 
-// export const questions: BaseQuestion[] = [
-//   {
-//     question: "Which sentence is grammatically correct?",
-//     options: [
-//       { label: "a", value: "She don't like coffee very much." },
-//       { label: "b", value: "She doesn't likes coffee very much." },
-//       { label: "c", value: "She doesn't like coffee very much." },
-//       { label: "d", value: "She not like coffee very much." },
-//     ],
-//     index: 1,
-//   },
-//   {
-//     question: "Choose the correct past tense form:",
-//     options: [
-//       { label: "a", value: "I have went to the store yesterday." },
-//       { label: "b", value: "I went to the store yesterday." },
-//       { label: "c", value: "I go to the store yesterday." },
-//       { label: "d", value: "I was went to the store yesterday." },
-//     ],
-//     index: 2,
-//   },
-//   {
-//     question: "What is the meaning of the word 'abundant'?",
-//     options: [
-//       { label: "a", value: "Scarce or limited" },
-//       { label: "b", value: "Existing in large quantities; plentiful" },
-//       { label: "c", value: "Difficult to understand" },
-//       { label: "d", value: "Moving very quickly" },
-//     ],
-//     index: 3,
-//   },
-//   {
-//     question: "Which sentence uses the correct preposition?",
-//     options: [
-//       { label: "a", value: "I am good in mathematics." },
-//       { label: "b", value: "I am good on mathematics." },
-//       { label: "c", value: "I am good at mathematics." },
-//       { label: "d", value: "I am good with mathematics." },
-//     ],
-//     index: 4,
-//   },
-//   {
-//     question: "Choose the sentence with correct subject-verb agreement:",
-//     options: [
-//       { label: "a", value: "The group of students are studying hard." },
-//       { label: "b", value: "The group of students is studying hard." },
-//       { label: "c", value: "The group of students were studying hard." },
-//       { label: "d", value: "The group of students have studying hard." },
-//     ],
-//     index: 5,
-//   },
-// ];
-
 export const gradeOptions: Option[] = [
-  { label: "A", value: "a" },
-  { label: "B", value: "b" },
-  { label: "C", value: "c" },
-  { label: "D", value: "d" },
-  { label: "E", value: "e" },
+  { label: "75% – 100%", value: "A" },
+  { label: "65% – 74%", value: "B" },
+  { label: "60% – 64%", value: "C" },
+  { label: "45% – 49%", value: "D" },
+  { label: "40% – 44%", value: "E" },
+  { label: "0% – 39%", value: "F" },
+  { label: "Nil", value: "nil" },
 ];
 
 export const classOptions: Option[] = [

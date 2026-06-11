@@ -26,10 +26,6 @@ const Assessment = () => {
   const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
-    console.log(answers);
-  }, [answers]);
-
-  useEffect(() => {
     if (!started) return;
     if (countdown <= 0) return;
 

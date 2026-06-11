@@ -8,6 +8,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+body {
+  /* max-width: 1440px; */
+  margin: 0 auto;
+}
+
 @theme {
   --font-inter: "Inter", sans-serif;
   --font-montserrat: "Montserrat", sans-serif;
