@@ -34,11 +34,7 @@ const Aside = () => {
           We use advanced AI to identify your knowledge gaps and build a personalized path just for you.
         </p>
 
-        <div className="mt-8 flex gap-4">
-          <div className="h-1 w-12 rounded-full bg-violet-500" />
-          <div className="h-1 w-12 rounded-full bg-slate-800" />
-          <div className="h-1 w-12 rounded-full bg-slate-800" />
-        </div>
+       
       </div>
     </div>
   );

@@ -8,7 +8,6 @@ import {
   questionnairesRequest,
   submitQuestionnaireRequest,
 } from "@/services/onboarding/requests";
-import { getSessionStorage } from "@/utils/session";
 
 const Questionnaire = () => {
   const navigate = useNavigate();
@@ -78,15 +77,7 @@ const Questionnaire = () => {
   };
 
   const handleSubmit = () => {
-    const userId = getSessionStorage("userId");
-    if (!userId) {
-      toast.error("Session expired. Please sign up again.");
-      navigate("/onboarding/auth/signup");
-      return;
-    }
-
     submit({
-      userId,
       answers: questions.map((q) => ({
         questionNumber: q.questionNumber,
         selected: answers[q.questionNumber] ?? "",

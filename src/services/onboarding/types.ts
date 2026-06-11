@@ -78,6 +78,5 @@ export type QuestionnaireAnswer = {
 };
 
 export type QuestionnaireSubmitPayload = {
-  userId: string;
   answers: QuestionnaireAnswer[];
 };
