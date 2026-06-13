@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { makeRequest } from "@/services/api";
 import { getSessionStorage, setSessionStorage } from "@/utils/session";
@@ -23,6 +24,7 @@ import {
   Check,
   EditIcon,
   GraduationCap,
+  RefreshCw,
   User,
   X,
 } from "lucide-react";
@@ -47,7 +49,11 @@ type OnboardingData = {
   schoolAddress?: string;
   language?: string;
   photo?: string | null;
-  learningProfile?: { learningStyle?: string };
+  learningProfile?: {
+    learningStyle?: string;
+    cognitiveScore?: number;
+    explanation?: string;
+  };
   pastExam?: { firstTerm?: string; secondTerm?: string; thirdTerm?: string };
 };
 
@@ -78,6 +84,7 @@ const formatDate = (value?: string) => {
 };
 
 const Profile = () => {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
 
   const firstName: string = getSessionStorage("userFirstName") ?? "";
@@ -277,7 +284,7 @@ const Profile = () => {
         </div>
 
         {/* Learning profile */}
-        <div className="min-w-48">
+        <div className="min-w-64 max-w-sm">
           <div className="flex items-center gap-2 text-emerald-600 mb-4">
             <Brain size={15} />
             <h3 className="text-sm font-bold uppercase tracking-widest">
@@ -287,15 +294,37 @@ const Profile = () => {
           {isLoading ? (
             <p className="text-sm text-slate-400">Loading…</p>
           ) : (
-            <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm">
-              <p className="text-slate-500">Style:</p>
-              <p className="font-medium capitalize">
-                {onboarding?.learningProfile?.learningStyle ?? "—"}
-              </p>
-              <p className="text-slate-500">Account:</p>
-              <p className="font-medium">Free</p>
+            <div className="space-y-3">
+              <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm">
+                <p className="text-slate-500">Style:</p>
+                <p className="font-medium capitalize">
+                  {onboarding?.learningProfile?.learningStyle ?? "—"}
+                </p>
+                <p className="text-slate-500">Cognitive Score:</p>
+                <p className="font-medium">
+                  {onboarding?.learningProfile?.cognitiveScore != null
+                    ? `${onboarding.learningProfile.cognitiveScore}%`
+                    : "—"}
+                </p>
+                <p className="text-slate-500">Account:</p>
+                <p className="font-medium">Free</p>
+              </div>
+              {onboarding?.learningProfile?.explanation && (
+                <p className="text-sm text-slate-500 leading-relaxed bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3">
+                  {onboarding.learningProfile.explanation}
+                </p>
+              )}
             </div>
           )}
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2 mt-4"
+            onClick={() => navigate("/dashboard/questionnaire")}
+          >
+            <RefreshCw size={14} />
+            Retake Questionnaire
+          </Button>
         </div>
 
         {/* Progress */}
