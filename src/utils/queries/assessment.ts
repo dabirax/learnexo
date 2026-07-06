@@ -13,10 +13,16 @@ export const getAssessmentRequest = async ({
   return await useRequest(`/assessment/${subject}/${gradeClass}`);
 };
 
-export const getAssessmentScore = async (answers: Answer[]) => {
+export const submitAssessmentRequest = async ({
+  assessmentId,
+  answers,
+}: {
+  assessmentId: string;
+  answers: Answer[];
+}) => {
   return await useRequest(
-    "/assessment/get-score",
+    "/assessment/submit",
     "POST",
-    JSON.stringify(answers)
+    JSON.stringify({ assessmentId, answers })
   );
 };

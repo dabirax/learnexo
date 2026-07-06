@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PageProgress from "../../../../components/ui/form/PageProgress";
 import HeaderText from "../../components/HeaderText";
 import { removeAndReturn } from "@/utils/funcs";
@@ -18,8 +18,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Selector } from "@/components/ui/form/Selector";
-import { ArrowRight, GraduationCap, School } from "lucide-react";
+import { ArrowRight, ChevronLeft, GraduationCap, School } from "lucide-react";
 import { onboardingRequest } from "@/services/onboarding/requests";
+import {
+  getOnboardingDraft,
+  saveOnboardingDraft,
+  getOnboardingPhoto,
+  clearOnboardingDraft,
+} from "../../onboardingDraft";
 
 const formSchema = z.object({
   schoolName: z.string().min(1, "School name is required"),
@@ -32,12 +38,12 @@ const formSchema = z.object({
 
 const SchoolAndLearning = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const prevValue = location.state?.prevValue || {};
+  const draft = getOnboardingDraft();
 
   const { mutate: submitOnboarding, isPending } = useMutation({
     mutationFn: onboardingRequest,
     onSuccess: () => {
+      clearOnboardingDraft();
       toast.success("Profile saved! Starting your assessment...");
       setTimeout(() => navigate("../questionnaire"), 1000);
     },
@@ -46,15 +52,20 @@ const SchoolAndLearning = () => {
 
   const onboardingForm = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
-      schoolName: "",
-      studentClass: "",
-      schoolAddress: "",
-      firstTerm: "",
-      secondTerm: "",
-      thirdTerm: "",
+      schoolName: draft.schoolName ?? "",
+      studentClass: draft.studentClass ?? "",
+      schoolAddress: draft.schoolAddress ?? "",
+      firstTerm: draft.firstTerm ?? "",
+      secondTerm: draft.secondTerm ?? "",
+      thirdTerm: draft.thirdTerm ?? "",
     },
     resolver: zodResolver(formSchema),
   });
+
+  const handlePrevious = () => {
+    saveOnboardingDraft(onboardingForm.getValues());
+    navigate("../personalandcontactinfo");
+  };
 
   const onSubmit = (value: z.infer<typeof formSchema>) => {
     const pastExam = {
@@ -63,7 +74,8 @@ const SchoolAndLearning = () => {
       thirdTerm: removeAndReturn(value, "thirdTerm"),
     };
 
-    const all = { ...prevValue, ...value, pastExam };
+    const all = { ...getOnboardingDraft(), ...value, pastExam };
+    const photo = getOnboardingPhoto();
 
     const formData = new FormData();
     formData.append("dateOfBirth", all.dateOfBirth ?? "");
@@ -77,8 +89,8 @@ const SchoolAndLearning = () => {
     formData.append("studentClass", all.studentClass ?? "");
     formData.append("schoolAddress", all.schoolAddress ?? "");
     formData.append("pastExam", JSON.stringify(pastExam));
-    if (all.photo instanceof File) {
-      formData.append("photo", all.photo);
+    if (photo instanceof File) {
+      formData.append("photo", photo);
     }
 
     submitOnboarding(formData);
@@ -174,19 +186,33 @@ const SchoolAndLearning = () => {
             </p>
           </div>
 
-          <button
-            type="submit"
-            disabled={isPending}
-            className="w-full bg-slate-900 hover:bg-violet-600 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-200 hover:shadow-violet-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50 group transform active:scale-[0.98]"
-          >
-            {isPending ? <Spinner /> : "Proceed to Questionnaire"}
-            {!isPending && (
-              <ArrowRight
-                className="group-hover:translate-x-1 transition-transform"
-                size={20}
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handlePrevious}
+              className="flex items-center gap-2 px-6 py-4 rounded-2xl border-2 border-slate-200 text-slate-500 font-bold hover:bg-slate-50 hover:text-slate-900 transition-all group"
+            >
+              <ChevronLeft
+                size={18}
+                className="group-hover:-translate-x-1 transition-transform"
               />
-            )}
-          </button>
+              Previous
+            </button>
+
+            <button
+              type="submit"
+              disabled={isPending}
+              className="flex-1 bg-slate-900 hover:bg-violet-600 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-200 hover:shadow-violet-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50 group transform active:scale-[0.98]"
+            >
+              {isPending ? <Spinner /> : "Proceed to Questionnaire"}
+              {!isPending && (
+                <ArrowRight
+                  className="group-hover:translate-x-1 transition-transform"
+                  size={20}
+                />
+              )}
+            </button>
+          </div>
         </form>
       </Form>
     </div>

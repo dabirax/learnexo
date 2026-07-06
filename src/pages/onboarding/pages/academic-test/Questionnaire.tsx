@@ -356,11 +356,14 @@ const Questionnaire = ({ retake = false }: { retake?: boolean }) => {
           </h1>
           <div className="flex items-center gap-2">
             <span
-              className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider ${
+              className={cn(
+                "flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider border-2 transition-colors",
                 timeLeft <= 60
-                  ? "text-rose-600 bg-rose-50"
-                  : "text-slate-400 bg-slate-100"
-              }`}
+                  ? "text-rose-600 bg-rose-50 border-rose-200 animate-pulse"
+                  : timeLeft <= 300
+                    ? "text-amber-600 bg-amber-50 border-amber-200"
+                    : "text-slate-400 bg-slate-100 border-slate-100",
+              )}
             >
               <Clock size={12} />
               {formatTime(timeLeft)}

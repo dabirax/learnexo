@@ -78,8 +78,8 @@ const Assessment = () => {
 
   if (
     !isSuccess ||
-    !assessmentQuestions.data ||
-    !Array.isArray(assessmentQuestions.data)
+    !assessmentQuestions.questions ||
+    !Array.isArray(assessmentQuestions.questions)
   ) {
     return (
       <div className="h-full flex flex-col items-center justify-center  max-w-sm mx-auto gap-6">
@@ -89,7 +89,7 @@ const Assessment = () => {
     );
   }
 
-  const questions = assessmentQuestions.data.map(transformQuestion);
+  const questions = assessmentQuestions.questions.map(transformQuestion);
   const numberOfQuestions = questions.length;
   // const question = questions.find((question: BaseQuestion) => question.index === idInt);
   const question = questions[idInt-1];
@@ -113,7 +113,12 @@ const Assessment = () => {
         <p className="mb-4">
           Something went wrong with this question! Kindly proceed
         </p>
-        <Navigation idInt={idInt} numberOfQuestions={numberOfQuestions} answers={answers}/>
+        <Navigation
+          idInt={idInt}
+          numberOfQuestions={numberOfQuestions}
+          answers={answers}
+          assessmentId={assessmentQuestions.assessmentId}
+        />
       </div>
     );
   }
@@ -122,13 +127,13 @@ const Assessment = () => {
     ...question,
     index: idInt,
     selected:
-      answers.find((answer) => answer.questionId === question.id)?.answer ?? "",
+      answers.find((answer) => answer.questionId === question.id)?.selected ?? "",
     setSelected: (val: string) =>
       setAnswers((prev) => {
         const filtered = prev.filter(
           (answer) => answer.questionId !== question.id
         );
-        return [...filtered, { questionId: question.id, answer: val }];
+        return [...filtered, { questionId: question.id, selected: val }];
       }),
   };
 
@@ -143,7 +148,12 @@ const Assessment = () => {
           option A - E
         </TestInstruction>
         <Question questionObject={questionObject} />
-        <Navigation idInt={idInt} numberOfQuestions={numberOfQuestions} answers={answers}/>
+        <Navigation
+          idInt={idInt}
+          numberOfQuestions={numberOfQuestions}
+          answers={answers}
+          assessmentId={assessmentQuestions.assessmentId}
+        />
       </div>
     </div>
   );

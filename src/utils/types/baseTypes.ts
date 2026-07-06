@@ -10,7 +10,7 @@ export type Option = {
 export type BaseQuestion = {
   index: number;
   question: string;
-  options: string[];
+  options: Record<string, string>;
   id: string;
 };
 
@@ -21,7 +21,7 @@ export type Headers = {
 };
 
 export type Answer = {
-  answer: string;
+  selected: string;
   questionId: string;
 };
 

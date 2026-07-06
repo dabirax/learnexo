@@ -274,3 +274,18 @@ input:-webkit-autofill:active {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@keyframes tile-ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.45;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+.animate-tile-ripple {
+  animation: tile-ripple 600ms ease-out forwards;
+}

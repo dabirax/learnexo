@@ -1,7 +1,7 @@
 import MainButton from "@/components/ui/MainButton";
 import Spinner from "@/components/ui/Spinner";
 import { setLocalStorage } from "@/utils/session";
-import { getAssessmentScore } from "@/utils/queries/assessment";
+import { submitAssessmentRequest } from "@/utils/queries/assessment";
 import type { Answer } from "@/utils/types/baseTypes";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -12,12 +12,14 @@ type NavigationProps = {
   idInt: number;
   numberOfQuestions: number;
   answers: Answer[];
+  assessmentId: string;
 };
 
 const Navigation: React.FC<NavigationProps> = ({
   idInt,
   numberOfQuestions,
   answers,
+  assessmentId,
 }) => {
   const navigate = useNavigate();
   const [submitCount, setSubmitCount] = useState(0);
@@ -32,10 +34,10 @@ const Navigation: React.FC<NavigationProps> = ({
     isPending,
     error,
   } = useMutation({
-    mutationKey: ["getAssessmentScore"],
-    mutationFn: getAssessmentScore,
+    mutationKey: ["submitAssessment"],
+    mutationFn: () => submitAssessmentRequest({ assessmentId, answers }),
     onSuccess: (data) => {
-      setLocalStorage("assessment_reccs", data.data.recommendations);
+      setLocalStorage("assessment_reccs", data.recommendations);
       toast.success("Assessment completed successfully");
       setTimeout(() => {
         navigate("../../../dashboard");
@@ -53,7 +55,7 @@ const Navigation: React.FC<NavigationProps> = ({
       return;
     }
 
-    submitAssessment(answers);
+    submitAssessment();
   };
 
   useEffect(() => {

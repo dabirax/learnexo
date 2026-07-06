@@ -4,10 +4,16 @@ import { Camera, Plus } from "lucide-react";
 
 type ImagePlaceholderProps = {
   setSelected: (file: File | null) => void;
+  initialPreview?: string | null;
 };
 
-const ImagePlaceholder: React.FC<ImagePlaceholderProps> = ({ setSelected }) => {
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+const ImagePlaceholder: React.FC<ImagePlaceholderProps> = ({
+  setSelected,
+  initialPreview,
+}) => {
+  const [previewImage, setPreviewImage] = useState<string | null>(
+    initialPreview ?? null,
+  );
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileClick = () => {

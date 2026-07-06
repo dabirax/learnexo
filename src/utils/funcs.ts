@@ -23,10 +23,12 @@ export const mmddyyyyToISO = (dateStr: string): string => {
   return date.toISOString();
 };
 
-export const transformQuestion = (apiQuestion: any): BaseQuestion => ({
-  index: parseInt(apiQuestion.questionNumber),
+export const transformQuestion = (apiQuestion: any, idx: number): BaseQuestion => ({
+  index: idx + 1,
   question: apiQuestion.question,
-  options: apiQuestion.options,
-  id: apiQuestion.id,
+  options: Object.fromEntries(
+    (apiQuestion.options ?? []).map((o: { key: string; text: string }) => [o.key, o.text])
+  ),
+  id: apiQuestion._id,
 });
 

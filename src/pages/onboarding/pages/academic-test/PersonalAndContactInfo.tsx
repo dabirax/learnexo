@@ -3,7 +3,6 @@ import PageProgress from "../../../../components/ui/form/PageProgress";
 import HeaderText from "../../components/HeaderText";
 import ImagePlaceholder from "../../components/ImagePlaceholder";
 import { genderOptions, languageOptions } from "../../service";
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,6 +17,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Selector } from "@/components/ui/form/Selector";
 import { MapPin, User, ArrowRight } from "lucide-react";
+import {
+  getOnboardingDraft,
+  saveOnboardingDraft,
+  setOnboardingPhoto,
+  getOnboardingPhotoPreview,
+} from "../../onboardingDraft";
 
 const today = new Date().toISOString().split("T")[0];
 
@@ -36,28 +41,24 @@ const formSchema = z.object({
 
 const PersonalAndContactInfo = () => {
   const navigate = useNavigate();
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const draft = getOnboardingDraft();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      dateOfBirth: "",
-      gender: "",
-      residentialAddress: "",
-      town: "",
-      state: "",
-      stateOfOrigin: "",
-      language: "",
+      dateOfBirth: draft.dateOfBirth ?? "",
+      gender: draft.gender ?? "",
+      residentialAddress: draft.residentialAddress ?? "",
+      town: draft.town ?? "",
+      state: draft.state ?? "",
+      stateOfOrigin: draft.stateOfOrigin ?? "",
+      language: draft.language ?? "",
     },
   });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    const prevValue = {
-      ...data,
-      ...(selectedImage ? { photo: selectedImage } : {}),
-    };
-
-    navigate("../schoolandlearning", { state: { prevValue } });
+    saveOnboardingDraft(data);
+    navigate("../schoolandlearning");
   };
 
   return (
@@ -71,7 +72,10 @@ const PersonalAndContactInfo = () => {
       </div>
 
       <div className="flex flex-col items-center justify-center p-6 bg-slate-50/50 rounded-[2.5rem] border-2 border-dashed border-slate-200">
-        <ImagePlaceholder setSelected={setSelectedImage} />
+        <ImagePlaceholder
+          setSelected={setOnboardingPhoto}
+          initialPreview={getOnboardingPhotoPreview()}
+        />
         <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-4">
           Upload Student Photo
         </p>
