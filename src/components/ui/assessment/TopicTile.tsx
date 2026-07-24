@@ -3,17 +3,24 @@ import { Lightbulb } from "lucide-react";
 
 type TopicTileProps = {
   title: string;
+  slug: string;
   progress: number;
-  takeTestTo: string;
+  category: string;
+  gradeClass: string;
+  subjectId: string;
   onShowInsight: () => void;
 };
 
 const TopicTile: React.FC<TopicTileProps> = ({
   title,
+  slug,
   progress,
-  takeTestTo,
+  category,
+  gradeClass,
+  subjectId,
   onShowInsight,
 }) => {
+  const takeTestTo = `/assessment/${subjectId}/${gradeClass}/1?category=${category}&topic=${slug}`;
   return (
     <div className="rounded-3xl border border-gray-3 bg-white p-5 flex flex-col justify-between gap-3 hover:scale-105 transition-transform duration-300">
       <p className="font-semibold text-sm md:text-base capitalize">

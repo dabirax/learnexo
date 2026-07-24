@@ -9,7 +9,8 @@ import { getLocalStorage } from "@/utils/session";
 
 const Dashboard = () => {
   const [progress, setProgress] = useState(20);
-  const recommendations = getLocalStorage("assessment_reccs", null);
+  const rawRecommendations = getLocalStorage("assessment_reccs");
+  const recommendations = Array.isArray(rawRecommendations) ? rawRecommendations : null;
 
   return (
     <div className="max-h-screen overflow-scroll">
@@ -36,11 +37,11 @@ const Dashboard = () => {
             <div className="flex flex-wrap gap-6 w-full justify-center sm:justify-start">
               <SubjectRecommendation
                 subject="mathematics"
-                to="/assessment/ENGLISH_LANGUAGE/JSS2/1"
+                to="/assessment/mathematics/jss2/1"
               />
               <SubjectRecommendation
                 subject="english"
-                to="/assessment/ENGLISH_LANGUAGE/JSS2/1"
+                to="/assessment/english/jss2/1"
               />
             </div>
           </div>

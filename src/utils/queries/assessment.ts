@@ -1,16 +1,43 @@
-import { useRequest } from "../hooks/useRequest";
+import { makeRequest } from "@/services/api";
 import { type Answer } from "../types/baseTypes";
 
 type AssessmentRequest = {
   subject: string;
   gradeClass: string;
+  category?: string;
+  topic?: string;
+};
+
+export type AssessmentQuestionsResponse = {
+  assessmentId: string;
+  total: number;
+  questions: Array<{
+    question: string;
+    options: Array<{ key: string; text: string }>;
+    _id: string;
+  }>;
+};
+
+export type SubmitAssessmentResponse = {
+  recommendations: Array<{
+    feedback: string;
+    recommend_for: string;
+    recommended_topic: string;
+  }>;
 };
 
 export const getAssessmentRequest = async ({
   subject,
   gradeClass,
-}: AssessmentRequest) => {
-  return await useRequest(`/assessment/${subject}/${gradeClass}`);
+  category,
+  topic,
+}: AssessmentRequest): Promise<AssessmentQuestionsResponse> => {
+  const params = new URLSearchParams();
+  if (category) params.append("category", category);
+  if (topic) params.append("topic", topic);
+  const query = params.toString();
+  const path = `/assessment/${subject}/${gradeClass}${query ? `?${query}` : ""}`;
+  return await makeRequest<AssessmentQuestionsResponse>(path);
 };
 
 export const submitAssessmentRequest = async ({
@@ -19,10 +46,9 @@ export const submitAssessmentRequest = async ({
 }: {
   assessmentId: string;
   answers: Answer[];
-}) => {
-  return await useRequest(
-    "/assessment/submit",
-    "POST",
-    JSON.stringify({ assessmentId, answers })
-  );
+}): Promise<SubmitAssessmentResponse> => {
+  return await makeRequest<SubmitAssessmentResponse>("/assessment/submit", "POST", {
+    assessmentId,
+    answers,
+  });
 };

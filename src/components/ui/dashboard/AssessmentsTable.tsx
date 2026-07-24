@@ -41,7 +41,7 @@ import type { Recommendation } from "@/utils/types/baseTypes";
 const ActivitiesTable = ({
   recommendations,
 }: {
-  recommendations: Recommendation[];
+  recommendations: Recommendation[] | null;
 }) => {
   const tabs = [
     {

@@ -4,8 +4,8 @@ import { setLocalStorage } from "@/utils/session";
 import { submitAssessmentRequest } from "@/utils/queries/assessment";
 import type { Answer } from "@/utils/types/baseTypes";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 type NavigationProps = {
@@ -13,6 +13,10 @@ type NavigationProps = {
   numberOfQuestions: number;
   answers: Answer[];
   assessmentId: string;
+  subject: string;
+  gradeClass: string;
+  onManualSubmit?: () => void;
+  isSubmitting?: boolean;
 };
 
 const Navigation: React.FC<NavigationProps> = ({
@@ -20,30 +24,39 @@ const Navigation: React.FC<NavigationProps> = ({
   numberOfQuestions,
   answers,
   assessmentId,
+  subject,
+  gradeClass,
+  onManualSubmit,
+  isSubmitting,
 }) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const queryString = searchParams.toString();
+  const suffix = queryString ? `?${queryString}` : "";
   const [submitCount, setSubmitCount] = useState(0);
-  const { subject, gradeClass } = useParams<{
-    subject: string;
-    gradeClass: string;
-  }>();
 
   const {
     mutate: submitAssessment,
-    isError,
     isPending,
-    error,
-  } = useMutation({
+  } = useMutation<{
+    recommendations?: Array<{
+      feedback: string;
+      recommend_for: string;
+      recommended_topic: string;
+    }>;
+  }>({
     mutationKey: ["submitAssessment"],
     mutationFn: () => submitAssessmentRequest({ assessmentId, answers }),
     onSuccess: (data) => {
-      setLocalStorage("assessment_reccs", data.recommendations);
+      if (data.recommendations) {
+        setLocalStorage("assessment_reccs", data.recommendations);
+      }
       toast.success("Assessment completed successfully");
       setTimeout(() => {
-        navigate("../../../dashboard");
+        navigate("/dashboard");
       }, 2000);
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       toast.error(err.message || "Something went wrong");
     },
   });
@@ -55,14 +68,12 @@ const Navigation: React.FC<NavigationProps> = ({
       return;
     }
 
-    submitAssessment();
-  };
-
-  useEffect(() => {
-    if (isError) {
-      toast.error(error.message);
+    if (onManualSubmit) {
+      onManualSubmit();
+    } else {
+      submitAssessment();
     }
-  }, [isError, error]);
+  };
 
   return (
     <div className="flex gap-4 flex-col md:flex-row mlg:flex-col lgd:flex-row justify-between">
@@ -70,7 +81,7 @@ const Navigation: React.FC<NavigationProps> = ({
         <div className="md:mr-auto mlg:mr-0 lgd:mr-auto">
           <MainButton
             white
-            onClick={() => navigate(`../${subject}/${gradeClass}/${idInt - 1}`)}
+            onClick={() => navigate(`/assessment/${subject}/${gradeClass}/${idInt - 1}${suffix}`)}
           >
             Previous Question
           </MainButton>
@@ -80,7 +91,7 @@ const Navigation: React.FC<NavigationProps> = ({
       {idInt < numberOfQuestions && (
         <div className="md:ml-auto mlg:ml-0 lgd:ml-auto">
           <MainButton
-            onClick={() => navigate(`../${subject}/${gradeClass}/${idInt + 1}`)}
+            onClick={() => navigate(`/assessment/${subject}/${gradeClass}/${idInt + 1}${suffix}`)}
           >
             Next Question
           </MainButton>
@@ -90,7 +101,7 @@ const Navigation: React.FC<NavigationProps> = ({
       {idInt === numberOfQuestions && (
         <div className="md:ml-auto mlg:ml-0 lgd:ml-auto">
           <MainButton onClick={handleSubmit}>
-            {isPending ? <Spinner /> : "Submit Answers And Proceed"}
+            {isPending || isSubmitting ? <Spinner /> : "Submit Answers And Proceed"}
           </MainButton>
         </div>
       )}

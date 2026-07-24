@@ -6,7 +6,7 @@ const getSessionStorage = (key: string) => {
   }
 };
 
-const setSessionStorage = (key: string, value:any) => {
+const setSessionStorage = (key: string, value: unknown) => {
   sessionStorage.setItem(key, JSON.stringify(value));
 };
 
@@ -22,7 +22,7 @@ const getLocalStorage = (key: string) => {
   }
 };
 
-const setLocalStorage = (key: string, value: any) => {
+const setLocalStorage = (key: string, value: unknown) => {
   localStorage.setItem(key, JSON.stringify(value));
 };
 

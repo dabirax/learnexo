@@ -16,7 +16,7 @@ const LandingHeader = () => {
         <div className="flex items-center gap-3">
           <Link to="/onboarding/auth/signup">
             <Button variant="outline" className="hidden sm:inline-flex">
-              Sign In
+              Sign Up
             </Button>
           </Link>
 

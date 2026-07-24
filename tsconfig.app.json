@@ -30,5 +30,6 @@
     "noUncheckedSideEffectImports": true
   },
   
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/archive", "src/layouts/rest.tsx"]
 }

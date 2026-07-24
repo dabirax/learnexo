@@ -1,7 +1,17 @@
-const TestInstruction: React.FC<any> = ({ children, numberOfQuestions }) => (
+type TestInstructionProps = {
+  children: React.ReactNode;
+  numberOfQuestions: number;
+  currentIndex?: number;
+};
+
+const TestInstruction: React.FC<TestInstructionProps> = ({
+  children,
+  numberOfQuestions,
+  currentIndex = 1,
+}) => (
   <div className="flex items-start gap-4 bg-violet-50/50 border-2 border-violet-100 p-4 rounded-2xl flex-col ">
     <p className="text-sm font-bold text-violet-600">
-      Question 1 - {numberOfQuestions}
+      Question {currentIndex} - {numberOfQuestions}
     </p>
     <div className="flex items-center gap-4">
       <div className="hidden sm:flex w-12 h-12 bg-white rounded-xl items-center justify-center text-violet-600 shadow-sm border border-violet-100 shrink-0">

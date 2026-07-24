@@ -46,8 +46,12 @@ export const makeRequest = async <TResponse = unknown>(
       refreshPromise = doFetch("/auth/refresh-session", "POST", undefined)
         .then((r) => r.json())
         .then((d) => {
-          setSessionStorage("accessToken", d.accessToken);
-          return d.accessToken as string;
+          const token = d.accessToken;
+          if (!token) {
+            throw new Error("No access token in refresh response");
+          }
+          setSessionStorage("accessToken", token);
+          return token;
         })
         .catch((err) => {
           window.location.href = "/";

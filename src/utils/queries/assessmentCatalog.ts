@@ -53,6 +53,17 @@ export type InsightTopic = {
   accuracy: number;
 };
 
+export type AiContentItem = {
+  topic: string;
+  priority: number;
+  resources: {
+    videos: { title: string; url: string }[];
+    materials: { title: string; url: string }[];
+  };
+  explanation: { summary: string; key_points: string[] };
+  recommended_action: string;
+};
+
 export type InsightResponse =
   | { hasInsight: false }
   | {
@@ -64,6 +75,7 @@ export type InsightResponse =
       strongTopics: InsightTopic[];
       recommendedNextTopic: { name: string; accuracy: number };
       explanation: string;
+      aiContent?: AiContentItem[] | null;
     };
 
 export const getSubjectsWithProgress = (gradeClass: string) =>

@@ -11,8 +11,8 @@ const Logo = () => {
           className="w-10 h-10 mlg:w-12 mlg:h-12 relative z-10"
         />
       </div>
-      <span className="font-inter text-white font-bold text-2xl mlg:text-3xl tracking-tighter">
-        Lear<span className="text-violet-500">NEXO</span>
+      <span className="font-inter text-blue-3 font-bold text-2xl mlg:text-3xl tracking-tighter">
+        Lear<span className="text-purple-1">NEXO</span>
       </span>
     </div>
   );

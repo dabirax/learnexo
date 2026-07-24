@@ -12,6 +12,8 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+import { useNavigate } from "react-router-dom"
+import { removeSessionStorage } from "@/utils/session"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +40,20 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    removeSessionStorage("accessToken")
+    const keysToRemove: string[] = []
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i)
+      if (key && key.startsWith("user")) {
+        keysToRemove.push(key)
+      }
+    }
+    keysToRemove.forEach((key) => removeSessionStorage(key))
+    navigate("/")
+  }
 
   const initials =
     user.name
@@ -110,7 +126,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

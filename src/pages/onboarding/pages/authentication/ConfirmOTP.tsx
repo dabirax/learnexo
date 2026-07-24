@@ -43,10 +43,11 @@ const ConfirmOTP = () => {
       setSessionStorage("accessToken", response.data.accessToken);
       const userData = response.data.user as unknown as Record<string, unknown>;
       Object.entries(userData).forEach(([key, value]) => {
-        setSessionStorage(
-          `user${key.charAt(0).toUpperCase() + key.slice(1)}`,
-          value,
-        );
+        const storageKey =
+          key === "userId"
+            ? "userId"
+            : `user${key.charAt(0).toUpperCase() + key.slice(1)}`;
+        setSessionStorage(storageKey, value);
       });
       navigate("/onboarding/test/personalandcontactinfo");
     },

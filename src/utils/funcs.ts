@@ -1,6 +1,6 @@
 import type { BaseQuestion } from "./types/baseTypes";
 
-export const removeAndReturn = <T extends Record<string, any>>(
+export const removeAndReturn = <T extends Record<string, unknown>>(
   obj: T,
   key: keyof T
 ) => {
@@ -23,12 +23,31 @@ export const mmddyyyyToISO = (dateStr: string): string => {
   return date.toISOString();
 };
 
-export const transformQuestion = (apiQuestion: any, idx: number): BaseQuestion => ({
-  index: idx + 1,
-  question: apiQuestion.question,
-  options: Object.fromEntries(
-    (apiQuestion.options ?? []).map((o: { key: string; text: string }) => [o.key, o.text])
-  ),
-  id: apiQuestion._id,
-});
+export const transformQuestion = (apiQuestion: unknown, idx: number): BaseQuestion => {
+  const q = apiQuestion as Record<string, unknown>;
+  const rawOptions = q.options;
+  let mappedOptions: Record<string, string> = {};
+
+  if (Array.isArray(rawOptions)) {
+    mappedOptions = Object.fromEntries(
+      rawOptions
+        .filter((o): o is Record<string, string> => typeof o === "object" && o !== null)
+        .map((o) => [String(o.key ?? ""), String(o.text ?? "")]),
+    );
+  } else if (typeof rawOptions === "object" && rawOptions !== null) {
+    mappedOptions = Object.fromEntries(
+      Object.entries(rawOptions as Record<string, unknown>).map(([k, v]) => [
+        k,
+        String(v ?? ""),
+      ]),
+    );
+  }
+
+  return {
+    index: idx + 1,
+    question: String(q.question ?? ""),
+    options: mappedOptions,
+    id: String(q._id ?? q.id ?? ""),
+  };
+};
 

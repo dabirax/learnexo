@@ -49,9 +49,8 @@ const CategoryPage = () => {
 
   if (!data) return null;
 
-  const takeAssessmentTo = subjectData
-    ? `/assessment/${subjectData.subject.id}/${gradeClass}/1`
-    : "#";
+  const subjectId = subjectData?.subject.id ?? data.subject.id;
+  const takeAssessmentTo = `/assessment/${subjectId}/${gradeClass}/1?category=${category}`;
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -86,8 +85,11 @@ const CategoryPage = () => {
             <TopicTile
               key={topic.id}
               title={topic.name}
+              slug={topic.slug}
               progress={topic.progress}
-              takeTestTo={takeAssessmentTo}
+              category={category}
+              gradeClass={gradeClass}
+              subjectId={subjectId}
               onShowInsight={() => setInsightOpen(true)}
             />
           ))}

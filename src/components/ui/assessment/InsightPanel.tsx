@@ -1,4 +1,4 @@
-import { CheckCircle2, AlertTriangle, Lightbulb } from "lucide-react";
+import { CheckCircle2, AlertTriangle, Lightbulb, BookOpen, PlayCircle, ArrowRight } from "lucide-react";
 import Spinner from "@/components/ui/Spinner";
 import type { InsightResponse } from "@/utils/queries/assessmentCatalog";
 
@@ -81,6 +81,82 @@ const InsightPanel: React.FC<InsightPanelProps> = ({ isLoading, insight }) => {
             <Lightbulb className="text-blue-3 shrink-0" size={18} />
             <p className="text-sm text-blue-5">{insight.explanation}</p>
           </div>
+
+          {insight.aiContent && insight.aiContent.length > 0 && (
+            <div className="flex flex-col gap-4">
+              <h4 className="text-xs font-bold uppercase tracking-widest text-blue-3 flex items-center gap-2">
+                <BookOpen size={15} />
+                Recommended Resources
+              </h4>
+              {insight.aiContent.slice(0, 3).map((item) => (
+                <div
+                  key={item.topic}
+                  className="rounded-2xl border border-gray-3 bg-white p-4 space-y-3"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold capitalize text-slate-900">
+                      {item.topic.replace(/_/g, " ")}
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-3/10 text-blue-3 font-bold uppercase">
+                      Priority {item.priority}
+                    </span>
+                  </div>
+
+                  {item.explanation?.summary && (
+                    <p className="text-xs text-gray-6 leading-relaxed">
+                      {item.explanation.summary}
+                    </p>
+                  )}
+
+                  {item.resources?.videos && item.resources.videos.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-5">
+                        Videos
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        {item.resources.videos.map((v, idx) => (
+                          <a
+                            key={idx}
+                            href={v.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm text-blue-3 hover:text-blue-4 transition-colors"
+                          >
+                            <PlayCircle size={14} />
+                            <span className="truncate">{v.title}</span>
+                            <ArrowRight size={12} className="ml-auto shrink-0" />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {item.resources?.materials && item.resources.materials.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-5">
+                        Reading Materials
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        {item.resources.materials.map((m, idx) => (
+                          <a
+                            key={idx}
+                            href={m.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm text-blue-3 hover:text-blue-4 transition-colors"
+                          >
+                            <BookOpen size={14} />
+                            <span className="truncate">{m.title}</span>
+                            <ArrowRight size={12} className="ml-auto shrink-0" />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

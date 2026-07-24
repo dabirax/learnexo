@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import Spinner from "../../../../components/ui/Spinner";
 import { toast } from "sonner";
 import { setSessionStorage } from "@/utils/session";
-import { useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,7 +16,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useLoginMutation } from "@/services/onboarding/queries";
+import { useMutation } from "@tanstack/react-query";
+import { loginUserRequest } from "@/services/onboarding/requests";
 
 const loginSchema = z.object({
   email: z.email("Please enter a valid email"),
@@ -29,12 +29,26 @@ const Login = () => {
 
   const {
     mutate: loginMutation,
-    data: response,
     isPending,
-    isError,
-    isSuccess,
-    error,
-  } = useLoginMutation();
+  } = useMutation({
+    mutationFn: loginUserRequest,
+    onSuccess: (response) => {
+      setSessionStorage("accessToken", response.data.accessToken);
+      const userData = response.data.user;
+      Object.entries(userData).forEach(([key, value]) => {
+        const storageKey =
+          key === "userId"
+            ? "userId"
+            : `user${key.charAt(0).toUpperCase() + key.slice(1)}`;
+        setSessionStorage(storageKey, value);
+      });
+      toast.success(response.message);
+      navigate("../../../dashboard");
+    },
+    onError: (err: Error) => {
+      toast.error(err.message);
+    },
+  });
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -43,25 +57,6 @@ const Login = () => {
       password: "",
     },
   });
-
-  useEffect(() => {
-    if (isError) {
-      toast.error(error.message);
-    }
-  }, [isError, error]);
-
-  if (isSuccess) {
-    setSessionStorage("accessToken", response.data.accessToken);
-    const userData = response.data.user;
-    Object.entries(userData).forEach(([key, value]) => {
-      setSessionStorage(
-        `user${key.charAt(0).toUpperCase() + key.slice(1)}`,
-        value,
-      );
-    });
-    toast.success(response.message);
-    navigate("../../../dashboard");
-  }
 
   const onSubmit = (data: z.infer<typeof loginSchema>) => {
     loginMutation(data);
