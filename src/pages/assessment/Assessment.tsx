@@ -41,6 +41,8 @@ const Assessment = () => {
   const topic = searchParams.get("topic") ?? undefined;
   const idInt = parseInt(id ?? "");
   const navigate = useNavigate();
+  const queryString = searchParams.toString();
+  const suffix = queryString ? `?${queryString}` : "";
 
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [started, setStarted] = useState(false);
@@ -443,7 +445,7 @@ const Assessment = () => {
               {idInt > 1 ? (
                 <button
                   type="button"
-                  onClick={() => navigate(`/assessment/${subject}/${gradeClass}/${idInt - 1}`)}
+                  onClick={() => navigate(`/assessment/${subject}/${gradeClass}/${idInt - 1}${suffix}`)}
                   className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-slate-200 text-slate-500 font-bold hover:bg-slate-50 hover:text-slate-900 transition-all group"
                 >
                   <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
@@ -456,7 +458,7 @@ const Assessment = () => {
               {idInt < numberOfQuestions ? (
                 <button
                   type="button"
-                  onClick={() => navigate(`/assessment/${subject}/${gradeClass}/${idInt + 1}`)}
+                  onClick={() => navigate(`/assessment/${subject}/${gradeClass}/${idInt + 1}${suffix}`)}
                   className="flex items-center gap-2 px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-violet-600 transition-all shadow-lg shadow-slate-200 group"
                 >
                   Next

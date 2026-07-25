@@ -3,6 +3,59 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { SidebarInset, SidebarTrigger } from "./sidebar";
 import { getSessionStorage } from "@/utils/session";
+import { useEffect, useState } from "react";
+
+const greetings = [
+  { text: "Welcome back", lang: "English" },
+  { text: "Kaabo", lang: "Yoruba" },
+  { text: "Nnọọ", lang: "Igbo" },
+  { text: "Sannu", lang: "Hausa" },
+];
+
+const WelcomeText = () => {
+  const firstName: string = getSessionStorage("userFirstName") ?? "";
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const fullText = greetings[currentIndex].text + (firstName ? `, ${firstName}` : "");
+
+    const timeout = setTimeout(
+      () => {
+        if (!isDeleting) {
+          if (displayText.length < fullText.length) {
+            setDisplayText(fullText.slice(0, displayText.length + 1));
+          } else {
+            setTimeout(() => setIsDeleting(true), 2000);
+          }
+        } else {
+          if (displayText.length > 0) {
+            setDisplayText(displayText.slice(0, -1));
+          } else {
+            setIsDeleting(false);
+            setCurrentIndex((prev) => (prev + 1) % greetings.length);
+          }
+        }
+      },
+      isDeleting ? 50 : 100,
+    );
+
+    return () => clearTimeout(timeout);
+  }, [displayText, isDeleting, currentIndex, firstName]);
+
+  return (
+    <div className="flex flex-col md:gap-1 items-start w-fit pt-4">
+      <p className="font-medium mlg:leading-9.5 mlg:text-[30px] md:leading-6 md:text-xl whitespace-nowrap mlg:mx-auto lg:mx-0 min-h-[1.2em]">
+        {displayText}
+        <span className="inline-block w-[2px] h-[0.9em] bg-slate-900 ml-0.5 animate-pulse align-middle" />
+      </p>
+      <p className="text-gray-6 mlg:leading-6 md:leading-4 md:text-sm whitespace-nowrap text-xs mlg:text-base mlg:mx-auto lg:mx-0">
+        Your personalized learning management system.
+      </p>
+    </div>
+  );
+};
 
 const Header = () => {
   return (
@@ -27,21 +80,6 @@ const Header = () => {
 };
 
 export default Header;
-
-export const WelcomeText = () => {
-  const firstName: string = getSessionStorage("userFirstName") ?? "";
-
-  return (
-    <div className="flex flex-col md:gap-1 items-start w-fit pt-4">
-      <p className="font-medium mlg:leading-9.5 mlg:text-[30px] md:leading-6 md:text-xl whitespace-nowrap mlg:mx-auto lg:mx-0">
-        Welcome back{firstName ? `, ${firstName}` : ""}
-      </p>
-      <p className="text-gray-6 mlg:leading-6 md:leading-4 md:text-sm whitespace-nowrap text-xs mlg:text-base mlg:mx-auto lg:mx-0">
-        Your learning management dashboard.
-      </p>
-    </div>
-  );
-};
 
 export const UserImageAndInfo = () => {
   const firstName: string = getSessionStorage("userFirstName") ?? "";

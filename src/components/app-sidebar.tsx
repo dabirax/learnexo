@@ -23,6 +23,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { getSessionStorage } from "@/utils/session";
+import logo from "@/assets/images/Logo-no-bg.png";
 
 const data = {
   navMain: [
@@ -46,14 +47,20 @@ const data = {
         },
         {
           title: "Analytics",
-          url: "#",
+          url: "/dashboard/analytics",
         },
       ],
     },
     {
       title: "Courses",
-      url: "#",
+      url: "/dashboard/courses",
       icon: Layers,
+      items: [
+        {
+          title: "All Courses",
+          url: "/dashboard/courses",
+        },
+      ],
     },
     {
       title: "Assessment",
@@ -75,8 +82,14 @@ const data = {
 
     {
       title: "Reports",
-      url: "#",
+      url: "/dashboard/reports",
       icon: ChartPie,
+      items: [
+        {
+          title: "All Reports",
+          url: "/dashboard/reports",
+        },
+      ],
     },
     {
       title: "Instructors",
@@ -110,7 +123,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <SidebarTrigger />
+        <div className="flex items-center gap-3 px-2 py-3">
+          <SidebarTrigger />
+          <div className="group-data-[collapsible=icon]:hidden">
+            <div className="flex items-center gap-4 group cursor-pointer">
+              <div className="relative">
+                <div className="absolute inset-0 bg-violet-500 blur-md opacity-0 group-hover:opacity-15 transition-opacity" />
+                <img
+                  src={logo}
+                  alt="LEARNEXO"
+                  className="w-10 h-10 mlg:w-8 mlg:h-8 relative z-10"
+                />
+              </div>
+              <span className="font-inter text-blue-3 font-bold text-2xl mlg:text-md tracking-tighter">
+                Lear<span className="text-purple-1">NEXO</span>
+              </span>
+            </div>
+          </div>
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
