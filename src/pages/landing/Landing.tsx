@@ -6,15 +6,17 @@ import Recommendation from "./Recommendation";
 import StartToday from "./StartToday";
 import LandingFooter from "../../components/ui/landing/LandingFooter";
 import ConcentricCircles from "@/components/ui/landing/ConcentricCircles";
+import { useDocumentTitle } from "@/utils/hooks/useDocumentTitle";
 
 const Landing = () => {
+  useDocumentTitle("Home");
   return (
     <div className="bg-white z-20 max-w-[1440px] mx-auto">
       <Hero />
       <HowItWorks />
       <Features />
-      <TheTeam />
-      <Recommendation />
+      {/* <TheTeam /> */}
+      {/* <Recommendation /> */}
       <StartToday />
       <LandingFooter />
 

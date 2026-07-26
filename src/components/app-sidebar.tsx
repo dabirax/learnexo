@@ -2,14 +2,10 @@
 
 import * as React from "react";
 import {
-  BookCheck,
   ChartPie,
   CopyCheck,
   Layers,
   LayoutDashboardIcon,
-  LifeBuoy,
-  Settings,
-  Users,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -42,10 +38,6 @@ const data = {
           url: "/dashboard/profile",
         },
         {
-          title: "Notifications",
-          url: "#",
-        },
-        {
           title: "Analytics",
           url: "/dashboard/analytics",
         },
@@ -73,13 +65,6 @@ const data = {
         },
       ],
     },
-
-    {
-      title: "Quizzes",
-      url: "#",
-      icon: BookCheck,
-    },
-
     {
       title: "Reports",
       url: "/dashboard/reports",
@@ -90,21 +75,6 @@ const data = {
           url: "/dashboard/reports",
         },
       ],
-    },
-    {
-      title: "Instructors",
-      url: "#",
-      icon: Users,
-    },
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings,
     },
   ],
 };

@@ -7,19 +7,19 @@ const OnboardingLayout: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col mlg:flex-row w-full min-h-screen bg-white relative">
+    <div className="flex flex-col mlg:flex-row w-full min-h-screen bg-white dark:bg-slate-950 relative">
       <Aside />
 
-      <main className="flex-1 flex flex-col relative bg-white">
-        <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:40px_40px] opacity-30 pointer-events-none" />
+      <main className="flex-1 flex flex-col relative bg-white dark:bg-slate-950">
+        <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:40px_40px] opacity-30 pointer-events-none dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)]" />
 
-        <div className="absolute inset-0 bg-gradient-to-tr from-slate-50 via-white/80 to-white pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-slate-50 via-white/80 to-white pointer-events-none dark:from-slate-950 dark:via-slate-900/80 dark:to-slate-950" />
 
         <div className="relative z-10 flex flex-col h-full">
           <div className="h-16 px-8 mlg:px-12 flex items-center">
             <button
               onClick={() => navigate(-1)}
-              className="group flex items-center gap-2 text-slate-400 hover:text-slate-900 transition-colors"
+              className="group flex items-center gap-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               <ArrowLeft
                 size={18}

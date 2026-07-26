@@ -1,21 +1,49 @@
 import { Route, Routes } from "react-router-dom";
+import { Suspense, lazy } from "react";
 import MainLayout from "../layouts/MainLayout";
-import Assessment from "@/pages/assessment/Assessment";
-import ClassPage from "@/pages/assessment/ClassPage";
-import SubjectPage from "@/pages/assessment/SubjectPage";
-import CategoryPage from "@/pages/assessment/CategoryPage";
+import SuspenseFallback from "@/components/SuspenseFallback";
+
+const Assessment = lazy(() => import("@/pages/assessment/Assessment"));
+const ClassPage = lazy(() => import("@/pages/assessment/ClassPage"));
+const SubjectPage = lazy(() => import("@/pages/assessment/SubjectPage"));
+const CategoryPage = lazy(() => import("@/pages/assessment/CategoryPage"));
 
 const AssessmentRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
-        <Route index element={<ClassPage />} />
-        <Route path=":gradeClass/:subject" element={<SubjectPage />} />
+        <Route
+          index
+          element={
+            <Suspense fallback={<SuspenseFallback />}>
+              <ClassPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path=":gradeClass/:subject"
+          element={
+            <Suspense fallback={<SuspenseFallback />}>
+              <SubjectPage />
+            </Suspense>
+          }
+        />
         <Route
           path=":gradeClass/:subject/category/:category"
-          element={<CategoryPage />}
+          element={
+            <Suspense fallback={<SuspenseFallback />}>
+              <CategoryPage />
+            </Suspense>
+          }
         />
-        <Route path=":subject/:gradeClass/:id" element={<Assessment />} />
+        <Route
+          path=":subject/:gradeClass/:id"
+          element={
+            <Suspense fallback={<SuspenseFallback />}>
+              <Assessment />
+            </Suspense>
+          }
+        />
       </Route>
     </Routes>
   );

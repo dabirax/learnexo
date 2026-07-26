@@ -11,7 +11,7 @@ const TheTeam = () => {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 justify-between mx-12">
+      <div className="grid md:grid-cols-2 gap-6 justify-between mx-12">
         {teamMembers.map((member) => {
           const { x, linkedin, role, job, name, img } = member;
           return (

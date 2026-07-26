@@ -14,6 +14,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Clock, BrainCircuit, Zap, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { setLocalStorage } from "@/utils/session";
+import { useDocumentTitle } from "@/utils/hooks/useDocumentTitle";
 
 const ASSESSMENT_DURATION = 15 * 60;
 
@@ -31,6 +32,7 @@ const PROCESSING_STEPS = [
 ];
 
 const Assessment = () => {
+  useDocumentTitle("Assessment");
   const { subject, gradeClass, id } = useParams<{
     subject: string;
     gradeClass: string;

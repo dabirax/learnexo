@@ -41,7 +41,7 @@ const Tile: React.FC<TileProps> = ({
     <Link
       to={to}
       onClick={handleClick}
-      className="relative overflow-hidden aspect-square rounded-3xl border border-gray-3 bg-white p-5 flex flex-col justify-between hover:scale-105 hover:shadow-lg active:scale-95 transition-transform duration-300"
+      className="relative overflow-hidden aspect-square rounded-3xl border border-gray-3 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 flex flex-col justify-between hover:scale-105 hover:shadow-lg active:scale-95 transition-transform duration-300"
     >
       {ripples.map((r) => (
         <span
@@ -56,16 +56,16 @@ const Tile: React.FC<TileProps> = ({
       </div>
 
       <div className="flex flex-col gap-1">
-        <p className="font-semibold text-sm md:text-base capitalize line-clamp-2">
+        <p className="font-semibold text-sm md:text-base capitalize line-clamp-2 dark:text-white">
           {title}
         </p>
-        <div className="h-1.5 bg-gray-4 rounded-full">
+        <div className="h-1.5 bg-gray-4 dark:bg-slate-700 rounded-full">
           <div
             className={`h-full rounded-full ${progress < 50 ? "bg-red-700" : "bg-blue-3"}`}
             style={{ width: `${progress}%` }}
           />
         </div>
-        <p className="text-xs text-gray-6">{progress}%</p>
+        <p className="text-xs text-gray-6 dark:text-slate-400">{progress}%</p>
       </div>
     </Link>
   );

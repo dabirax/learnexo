@@ -7,12 +7,14 @@ import Spinner from "@/components/ui/Spinner";
 import { getSubjectsWithProgress } from "@/utils/queries/assessmentCatalog";
 import { normalizeClass, classLabel } from "@/utils/lib/assessmentCatalog";
 import { getSubjectVisual } from "@/utils/lib/assessmentVisuals";
+import { useDocumentTitle } from "@/utils/hooks/useDocumentTitle";
 
 type OnboardingData = {
   studentClass?: string;
 };
 
 const ClassPage = () => {
+  useDocumentTitle("Assessment");
   const userId: string = getSessionStorage("userId") ?? "";
 
   const { data: profileData, isLoading: isProfileLoading } = useQuery({

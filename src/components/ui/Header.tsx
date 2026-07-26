@@ -1,81 +1,43 @@
 import { Bell } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
-import { SidebarInset, SidebarTrigger } from "./sidebar";
+import { SidebarTrigger } from "./sidebar";
 import { getSessionStorage } from "@/utils/session";
-import { useEffect, useState } from "react";
-
-const greetings = [
-  { text: "Welcome back", lang: "English" },
-  { text: "Kaabo", lang: "Yoruba" },
-  { text: "Nnọọ", lang: "Igbo" },
-  { text: "Sannu", lang: "Hausa" },
-];
-
-const WelcomeText = () => {
-  const firstName: string = getSessionStorage("userFirstName") ?? "";
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [displayText, setDisplayText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    const fullText = greetings[currentIndex].text + (firstName ? `, ${firstName}` : "");
-
-    const timeout = setTimeout(
-      () => {
-        if (!isDeleting) {
-          if (displayText.length < fullText.length) {
-            setDisplayText(fullText.slice(0, displayText.length + 1));
-          } else {
-            setTimeout(() => setIsDeleting(true), 2000);
-          }
-        } else {
-          if (displayText.length > 0) {
-            setDisplayText(displayText.slice(0, -1));
-          } else {
-            setIsDeleting(false);
-            setCurrentIndex((prev) => (prev + 1) % greetings.length);
-          }
-        }
-      },
-      isDeleting ? 50 : 100,
-    );
-
-    return () => clearTimeout(timeout);
-  }, [displayText, isDeleting, currentIndex, firstName]);
-
-  return (
-    <div className="flex flex-col md:gap-1 items-start w-fit pt-4">
-      <p className="font-medium mlg:leading-9.5 mlg:text-[30px] md:leading-6 md:text-xl whitespace-nowrap mlg:mx-auto lg:mx-0 min-h-[1.2em]">
-        {displayText}
-        <span className="inline-block w-[2px] h-[0.9em] bg-slate-900 ml-0.5 animate-pulse align-middle" />
-      </p>
-      <p className="text-gray-6 mlg:leading-6 md:leading-4 md:text-sm whitespace-nowrap text-xs mlg:text-base mlg:mx-auto lg:mx-0">
-        Your personalized learning management system.
-      </p>
-    </div>
-  );
-};
+import { ThemeToggle } from "@/components/ThemeToggle";
+import logo from "@/assets/images/Logo-no-bg.png";
 
 const Header = () => {
   return (
-    <div className="w-full flex items-center gap-4 md:gap-6 mx-auto mb-4 border-b fixed top-0 z-20 bg-white pb-4">
-      <div className="flex flex-row-reverse flex-wrap items-center justify-between gap-4">
-        <WelcomeText />
+    <header className="fixed top-0 left-0 right-0 z-50 h-16 border-b bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 px-4 flex items-center justify-between transition-colors">
+      <Link to="/dashboard" className="flex items-center gap-3 shrink-0">
+        <div className="relative">
+          <img
+            src={logo}
+            alt="LEARNEXO"
+            className="w-10 h-10 relative z-10"
+          />
+        </div>
+        <span className="font-inter text-blue-3 font-bold text-2xl tracking-tighter">
+          Lear<span className="text-purple-1">NEXO</span>
+        </span>
+      </Link>
 
-        <div className="flex items-center  gap-2 mr-auto md:mr-0">
-          <SidebarInset>
-            <SidebarTrigger className="rounded-md border-gray-4 p-4 w-11 h-11 hover:scale-105 transition duration-300 ease-in-out border-2 md:hidden" />
-          </SidebarInset>
+      <div className="flex items-center gap-3">
+        <SidebarTrigger className="md:hidden h-9 w-9 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 shrink-0" />
 
+        <div className="shrink-0">
+          <ThemeToggle />
+        </div>
+
+        <div className="shrink-0">
           <NotificationBell />
+        </div>
 
-          <div className="hidden md:block">
-            <UserImageAndInfo />
-          </div>
+        <div className="shrink-0">
+          <UserImageAndInfo />
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 
@@ -89,18 +51,20 @@ export const UserImageAndInfo = () => {
     `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "?";
 
   return (
-    <div className="border-2 border-gray-4 rounded-full p-1 h-11 flex items-center justify-between gap-3 pr-6 cursor-pointer max-w-[200px]">
+    <div className="border border-slate-200 dark:border-slate-700 rounded-full p-1 h-11 flex items-center gap-3 pr-6 cursor-pointer shrink-0">
       <Link to="./profile">
         <Avatar className="size-9">
-          <AvatarFallback>{initials}</AvatarFallback>
+          <AvatarFallback className="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">
+            {initials}
+          </AvatarFallback>
         </Avatar>
       </Link>
 
       <div className="flex flex-col gap-1">
-        <span className="font-semibold tracking-tight leading-none">
+        <span className="font-semibold tracking-tight leading-none text-slate-900 dark:text-white">
           {firstName || "User"}
         </span>
-        <span className="leading-none text-sm text-muted-foreground capitalize">
+        <span className="leading-none text-sm text-slate-500 dark:text-slate-400 capitalize">
           {role}
         </span>
       </div>
@@ -110,8 +74,8 @@ export const UserImageAndInfo = () => {
 
 export const NotificationBell = () => {
   return (
-    <div className="border-2 border-gray-4 rounded-lg p-1.5 w-11 h-11 flex items-center justify-center hover:scale-105 transition duration-300 ease-in-out">
-      <Bell color="#BBBBBB" />
-    </div>
+    <button className="flex items-center justify-center h-10 w-10 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 transition-all shrink-0">
+      <Bell className="text-slate-400 dark:text-slate-500" size={18} />
+    </button>
   );
 };

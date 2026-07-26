@@ -13,6 +13,7 @@ import {
 } from "recharts";
 import { getAnalytics } from "@/utils/queries/analytics";
 import { BarChart3, TrendingUp, GitCompare, BookOpen } from "lucide-react";
+import { useDocumentTitle } from "@/utils/hooks/useDocumentTitle";
 
 const AnalyticsLoading = () => (
   <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] gap-6">
@@ -30,12 +31,13 @@ const AnalyticsLoading = () => (
 const EmptyState = () => (
   <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] gap-4">
     <BookOpen size={48} className="text-slate-300" />
-    <p className="text-slate-500 text-lg">No analytics data available yet.</p>
-    <p className="text-slate-400 text-sm">Complete some assessments to see your progress.</p>
+    <p className="text-slate-500 dark:text-slate-400 text-lg">No analytics data available yet.</p>
+    <p className="text-slate-400 dark:text-slate-500 text-sm">Complete some assessments to see your progress.</p>
   </div>
 );
 
 const Analytics = () => {
+  useDocumentTitle("Analytics");
   const { data, isLoading } = useQuery({
     queryKey: ["analytics"],
     queryFn: getAnalytics,
@@ -58,15 +60,15 @@ const Analytics = () => {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Analytics</h1>
-        <p className="text-slate-500 mt-1">Track your learning progress and mastery across subjects.</p>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Analytics</h1>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">Track your learning progress and mastery across subjects.</p>
       </div>
 
       {/* Class Mastery */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
         <div className="flex items-center gap-2 mb-6">
           <BarChart3 size={20} className="text-violet-600" />
-          <h2 className="text-lg font-bold text-slate-900">Class Mastery</h2>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white">Class Mastery</h2>
         </div>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
@@ -98,7 +100,7 @@ const Analytics = () => {
           }));
 
         return (
-          <div key={subjectName} className="bg-white rounded-2xl border border-slate-200 p-6">
+          <div key={subjectName} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
             <div className="flex items-center gap-2 mb-6">
               <TrendingUp size={20} className="text-violet-600" />
               <h2 className="text-lg font-bold text-slate-900 capitalize">
@@ -143,7 +145,7 @@ const Analytics = () => {
         }));
 
         return (
-          <div key={`topic-${subjectName}`} className="bg-white rounded-2xl border border-slate-200 p-6">
+          <div key={`topic-${subjectName}`} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
             <div className="flex items-center gap-2 mb-6">
               <GitCompare size={20} className="text-violet-600" />
               <h2 className="text-lg font-bold text-slate-900 capitalize">

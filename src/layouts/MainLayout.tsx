@@ -12,7 +12,7 @@ export default function Page() {
   }
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
       <SidebarProvider>
         <AppSidebar />
         <div className="w-full max-h-screen mt-24">

@@ -6,6 +6,7 @@ import { ArrowLeft, Download, CheckCircle2, XCircle, BrainCircuit, Sparkles, Boo
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { toast } from "sonner";
+import { useDocumentTitle } from "@/utils/hooks/useDocumentTitle";
 
 const ReportLoading = () => (
   <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] gap-6">
@@ -14,13 +15,14 @@ const ReportLoading = () => (
       <FileText size={24} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-violet-600" />
     </div>
     <div className="text-center">
-      <p className="text-slate-900 font-semibold text-lg">Loading Report...</p>
-      <p className="text-slate-500 text-sm mt-1">Fetching assessment details</p>
+      <p className="text-slate-900 dark:text-white font-semibold text-lg">Loading Report...</p>
+      <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Fetching assessment details</p>
     </div>
   </div>
 );
 
 const ReportDetail = () => {
+  useDocumentTitle("Assessment Report");
   const { assessmentId } = useParams<{ assessmentId: string }>();
   const navigate = useNavigate();
   const reportRef = useRef<HTMLDivElement>(null);
@@ -39,8 +41,23 @@ const ReportDetail = () => {
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pdfWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pdfHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pdfHeight;
+      }
+
       pdf.save(`assessment-report-${assessmentId}.pdf`);
       toast.success("PDF downloaded successfully", { id: toastId });
     } catch {
@@ -54,7 +71,7 @@ const ReportDetail = () => {
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] gap-4">
         <FileText size={48} className="text-slate-300" />
-        <p className="text-slate-500 text-lg">Report not found.</p>
+        <p className="text-slate-500 dark:text-slate-400 text-lg">Report not found.</p>
         <button
           onClick={() => navigate("/dashboard/reports")}
           className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-violet-600 transition-colors"
@@ -87,7 +104,7 @@ const ReportDetail = () => {
         </button>
       </div>
 
-      <div ref={reportRef} className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+      <div ref={reportRef} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
         {/* Header */}
         <div className="bg-slate-900 text-white p-8">
           <div className="flex items-center justify-between">
@@ -109,7 +126,7 @@ const ReportDetail = () => {
             </div>
             <div className="text-right">
               <p className="text-5xl font-bold">{data.score}%</p>
-              <p className="text-slate-400 text-sm mt-1">Overall Score</p>
+              <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Overall Score</p>
             </div>
           </div>
         </div>
@@ -206,7 +223,7 @@ const ReportDetail = () => {
 
           {/* Corrections */}
           <div>
-            <h2 className="text-lg font-bold text-slate-900 mb-4">Corrections</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Corrections</h2>
             <div className="space-y-4">
               {data.corrections.map((correction) => (
                 <div

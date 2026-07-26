@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/table";
 import BentoBox from "./BentoBox";
 import noData from "../../../assets/images/empty-table.png";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Recommendation } from "@/utils/types/baseTypes";
 
 // const englishTopics = [
@@ -43,86 +42,56 @@ const ActivitiesTable = ({
 }: {
   recommendations: Recommendation[] | null;
 }) => {
-  const tabs = [
-    {
-      name: "English",
-      value: "English",
-      content: recommendations,
-    },
-    {
-      name: "Mathematics",
-      value: "Mathematics",
-      content: null,
-    },
-  ];
+  const hasRecommendations = recommendations && recommendations.length > 0;
 
   return (
     <div>
-      <Tabs defaultValue={tabs[0].value} className=" w-full">
-        <TabsList className="w-full p-0 bg-background justify-start border-b rounded-none">
-          {tabs.map((tab) => (
-            <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              className="rounded-none bg-background h-full data-[state=active]:shadow-none border-2 border-transparent border-b-primary data-[state=active]:border-primary data-[state=active]:border-b-background -mb-[2px] rounded-t max-w-sm"
-            >
-              <code className="text-[13px]">{tab.name}</code>
-            </TabsTrigger>
-          ))}
-        </TabsList>
+      <BentoBox>
+        <h2 className="mb-4 font-semibold leading-5 z-20">
+          Recommended topics
+        </h2>
 
-        <BentoBox>
-          <h2 className="mb-4 font-semibold leading-5 z-20">
-            Recommended topics
-          </h2>
-
-          {tabs.map((tab) => (
-            <TabsContent key={tab.value} value={tab.value}>
-              <Table className="table-fixed min-w-120">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>S/N</TableHead>
-                    <TableHead>Topic</TableHead>
-                    <TableHead>Focus</TableHead>
-                    <TableHead className="w-2/5">Feedback</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {tab.content ? (
-                    tab.content.map((topic, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="font-medium">
-                          {index + 1}
-                        </TableCell>
-                        <TableCell className="truncate">
-                          {topic.recommended_topic}
-                        </TableCell>
-                        <TableCell className="w-2/5 truncate">
-                          {topic.recommend_for}
-                        </TableCell>
-                        <TableCell className="w-2/5 truncate">
-                          {topic.feedback}
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell className="w-full" colSpan={4}>
-                        <div className="w-full flex items-center flex-col gap-4 pb-8 pt-6">
-                          <p className="text-gray-6 text-sm font-medium leading-5">
-                            No Assessment taken yet
-                          </p>
-                          <img src={noData} alt="No Assessments" />
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TabsContent>
-          ))}
-        </BentoBox>
-      </Tabs>
+        {hasRecommendations ? (
+          <Table className="table-fixed min-w-120">
+            <TableHeader>
+              <TableRow>
+                <TableHead>S/N</TableHead>
+                <TableHead>Topic</TableHead>
+                <TableHead>Focus</TableHead>
+                <TableHead className="w-2/5">Feedback</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {recommendations.map((topic, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">
+                    {index + 1}
+                  </TableCell>
+                  <TableCell className="truncate">
+                    {topic.recommended_topic}
+                  </TableCell>
+                  <TableCell className="w-2/5 truncate">
+                    {topic.recommend_for}
+                  </TableCell>
+                  <TableCell className="w-2/5 truncate">
+                    {topic.feedback}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <div className="w-full flex items-center flex-col gap-4 pb-8 pt-6">
+            <p className="text-gray-6 text-sm font-medium leading-5">
+              No recommendations yet
+            </p>
+            <img src={noData} alt="No Assessments" />
+            <p className="text-gray-4 text-xs">
+              Complete an assessment to get personalized recommendations.
+            </p>
+          </div>
+        )}
+      </BentoBox>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCourses, type ContentItem } from "@/utils/queries/courses";
 import { Play, Headphones, BookOpen, FileText, Layers } from "lucide-react";
+import { useDocumentTitle } from "@/utils/hooks/useDocumentTitle";
 
 const CoursesLoading = () => (
   <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] gap-6">
@@ -92,6 +93,7 @@ const SectionCarousel = ({ title, items }: { title: string; items: ContentItem[]
 };
 
 const Courses = () => {
+  useDocumentTitle("Courses");
   const { data, isLoading } = useQuery({
     queryKey: ["courses"],
     queryFn: getCourses,
@@ -105,8 +107,8 @@ const Courses = () => {
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] gap-4">
         <BookOpen size={48} className="text-slate-300" />
-        <p className="text-slate-500 text-lg">No recommended content yet.</p>
-        <p className="text-slate-400 text-sm">Complete an assessment to get AI-recommended learning materials.</p>
+        <p className="text-slate-500 dark:text-slate-400 text-lg">No recommended content yet.</p>
+        <p className="text-slate-400 dark:text-slate-500 text-sm">Complete an assessment to get AI-recommended learning materials.</p>
       </div>
     );
   }
@@ -117,8 +119,8 @@ const Courses = () => {
   return (
     <div className="flex h-[calc(100vh-4rem)]">
       {/* Sidebar */}
-      <div className="w-56 bg-white border-r border-slate-200 overflow-y-auto p-4">
-        <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">Subjects</h2>
+      <div className="w-56 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 overflow-y-auto p-4">
+        <h2 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4">Subjects</h2>
         <div className="space-y-1">
           <button
             onClick={() => setSelectedSubject(null)}
@@ -146,8 +148,8 @@ const Courses = () => {
       <div className="flex-1 overflow-y-auto p-6">
         <div className="max-w-5xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-slate-900">Courses</h1>
-            <p className="text-slate-500 mt-1">AI-recommended learning materials tailored to your weak topics.</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Courses</h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">AI-recommended learning materials tailored to your weak topics.</p>
           </div>
 
           {selectedSubject === null ? (

@@ -1,6 +1,7 @@
 import "./App.css";
 import { Toaster } from "sonner";
 import AppRoutes from "./routes";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 
@@ -16,13 +17,11 @@ function App() {
   useEffect(() => {
     async function fetchLocationData() {
       if (!("geolocation" in navigator)) {
-        console.error("Geolocation not supported");
         return;
       }
 
       navigator.geolocation.getCurrentPosition(async (pos) => {
         const { latitude, longitude } = pos.coords;
-        console.log(latitude, longitude);
 
         try {
           const res = await fetch(
@@ -36,8 +35,6 @@ function App() {
           );
 
           const data = await res.json();
-          console.log(data);
-
           const address = data.address || {};
           const locationInfo = {
             latitude,
@@ -52,9 +49,9 @@ function App() {
             displayName: data.display_name,
           };
 
-          console.log("📍 Location Info:", locationInfo);
-        } catch (error) {
-          console.error("Error fetching location info:", error);
+          void locationInfo;
+        } catch {
+          // Silently fail — location is non-critical
         }
       });
     }
@@ -63,10 +60,12 @@ function App() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Toaster position="top-right" />
-      <AppRoutes />
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <Toaster position="top-right" />
+        <AppRoutes />
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

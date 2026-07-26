@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useDocumentTitle } from "@/utils/hooks/useDocumentTitle";
 import {
   Form,
   FormControl,
@@ -122,6 +123,7 @@ const toDateInputValue = (value?: string) => {
 };
 
 const Profile = () => {
+  useDocumentTitle("Profile");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
@@ -255,7 +257,7 @@ const Profile = () => {
     : undefined;
 
   return (
-    <div className="max-w-4xl mx-auto pt-10 px-6 pb-20">
+    <div className="max-w-4xl mx-auto pt-10 px-6 pb-20 dark:text-white">
       {/* Header row */}
       <div className="flex justify-between w-full items-start pb-6">
         <div className="flex items-center gap-5">
@@ -266,9 +268,9 @@ const Profile = () => {
             </AvatarFallback>
           </Avatar>
           <div className="space-y-1">
-            <h2 className="text-xl font-bold text-slate-900">{fullName || "—"}</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{fullName || "—"}</h2>
             <p className="text-sm font-medium text-violet-600 capitalize">{role || "Student"}</p>
-            <p className="text-sm text-slate-400">{email}</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500">{email}</p>
           </div>
         </div>
 
@@ -396,7 +398,7 @@ const Profile = () => {
                     name="dateOfBirth"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                        <FormLabel className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                           Date of Birth
                         </FormLabel>
                         <FormControl>
@@ -563,18 +565,18 @@ const Profile = () => {
               </h3>
             </div>
             {isLoading ? (
-              <p className="text-sm text-slate-400">Loading…</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500">Loading…</p>
             ) : (
               <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm">
-                <p className="text-slate-500">Date of Birth:</p>
+                <p className="text-slate-500 dark:text-slate-400">Date of Birth:</p>
                 <p className="font-medium">{formatDate(onboarding?.dateOfBirth)}</p>
-                <p className="text-slate-500">Gender:</p>
+                <p className="text-slate-500 dark:text-slate-400">Gender:</p>
                 <p className="font-medium capitalize">{onboarding?.gender ?? "—"}</p>
-                <p className="text-slate-500">State of Origin:</p>
+                <p className="text-slate-500 dark:text-slate-400">State of Origin:</p>
                 <p className="font-medium">{onboarding?.stateOfOrigin ?? "—"}</p>
-                <p className="text-slate-500">Town:</p>
+                <p className="text-slate-500 dark:text-slate-400">Town:</p>
                 <p className="font-medium">{onboarding?.town ?? "—"}</p>
-                <p className="text-slate-500">Address:</p>
+                <p className="text-slate-500 dark:text-slate-400">Address:</p>
                 <p className="font-medium">{onboarding?.residentialAddress ?? "—"}</p>
               </div>
             )}
@@ -589,18 +591,18 @@ const Profile = () => {
               </h3>
             </div>
             {isLoading ? (
-              <p className="text-sm text-slate-400">Loading…</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500">Loading…</p>
             ) : (
               <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm">
-                <p className="text-slate-500">Class:</p>
+                <p className="text-slate-500 dark:text-slate-400">Class:</p>
                 <p className="font-medium">{onboarding?.studentClass ?? "—"}</p>
-                <p className="text-slate-500">School:</p>
+                <p className="text-slate-500 dark:text-slate-400">School:</p>
                 <p className="font-medium">{onboarding?.schoolName ?? "—"}</p>
-                <p className="text-slate-500">School Address:</p>
+                <p className="text-slate-500 dark:text-slate-400">School Address:</p>
                 <p className="font-medium">{onboarding?.schoolAddress ?? "—"}</p>
-                <p className="text-slate-500">State:</p>
+                <p className="text-slate-500 dark:text-slate-400">State:</p>
                 <p className="font-medium">{onboarding?.state ?? "—"}</p>
-                <p className="text-slate-500">Language:</p>
+                <p className="text-slate-500 dark:text-slate-400">Language:</p>
                 <p className="font-medium capitalize">
                   {onboarding?.language ?? "—"}
                 </p>
@@ -617,25 +619,25 @@ const Profile = () => {
               </h3>
             </div>
             {isLoading ? (
-              <p className="text-sm text-slate-400">Loading…</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500">Loading…</p>
             ) : (
               <div className="space-y-3">
                 <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm">
-                  <p className="text-slate-500">Style:</p>
+                  <p className="text-slate-500 dark:text-slate-400">Style:</p>
                   <p className="font-medium capitalize">
                     {onboarding?.learningProfile?.learningStyle ?? "—"}
                   </p>
-                  <p className="text-slate-500">Cognitive Score:</p>
+                  <p className="text-slate-500 dark:text-slate-400">Cognitive Score:</p>
                   <p className="font-medium">
                     {onboarding?.learningProfile?.cognitiveScore != null
                       ? `${onboarding.learningProfile.cognitiveScore}%`
                       : "—"}
                   </p>
-                  <p className="text-slate-500">Account:</p>
+                  <p className="text-slate-500 dark:text-slate-400">Account:</p>
                   <p className="font-medium">Free</p>
                 </div>
                 {onboarding?.learningProfile?.explanation && (
-                  <p className="text-sm text-slate-500 leading-relaxed bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900 rounded-xl px-4 py-3">
                     {onboarding.learningProfile.explanation}
                   </p>
                 )}
@@ -684,10 +686,10 @@ const Profile = () => {
                 return (
                   <div
                     key={key}
-                    className="bg-slate-50 border border-slate-100 rounded-2xl px-8 py-5 text-center min-w-28"
+                    className="bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl px-8 py-5 text-center min-w-28"
                   >
-                    <p className="text-xs text-slate-400 mb-2">{label}</p>
-                    <p className="text-base font-bold text-slate-900">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mb-2">{label}</p>
+                    <p className="text-base font-bold text-slate-900 dark:text-white">
                       {raw ? (gradeLabel[raw] ?? raw) : "—"}
                     </p>
                   </div>

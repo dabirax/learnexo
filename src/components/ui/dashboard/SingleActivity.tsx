@@ -6,12 +6,12 @@ const SingleActivity: React.FC<SingleActivityType> = ({ title, topic, to }) => {
   return (
     <Link
       to={to}
-      className="flex gap-3 items-center w-full group hover:bg-gray-2 border-t border-t-gray-3 px-2 py-2 pr-6 "
+      className="flex gap-3 items-center w-full group hover:bg-slate-50 dark:hover:bg-slate-800 border-t border-t-slate-100 dark:border-t-slate-700 px-3 py-3 transition-colors"
     >
-      <BadgeCheck fill="#0D47A1" color="white" />
-      <div className="flex flex-col gap-2">
-        <p className="font-medium text-sm leading-5 capitalize">{title}</p>
-        <p className="text-xs text-gray-6 leading-4 capitalize group-hover:text-white-2">{topic}</p>
+      <BadgeCheck className="text-violet-600 shrink-0" size={18} />
+      <div className="flex flex-col gap-0.5 min-w-0">
+        <p className="font-medium text-sm leading-5 capitalize text-slate-900 dark:text-white truncate">{title}</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 leading-4 capitalize truncate">{topic}</p>
       </div>
     </Link>
   );

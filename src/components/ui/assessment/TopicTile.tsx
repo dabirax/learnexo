@@ -22,19 +22,19 @@ const TopicTile: React.FC<TopicTileProps> = ({
 }) => {
   const takeTestTo = `/assessment/${subjectId}/${gradeClass}/1?category=${category}&topic=${slug}`;
   return (
-    <div className="rounded-3xl border border-gray-3 bg-white p-5 flex flex-col justify-between gap-3 hover:scale-105 transition-transform duration-300">
-      <p className="font-semibold text-sm md:text-base capitalize">
+    <div className="rounded-3xl border border-gray-3 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 flex flex-col justify-between gap-3 hover:scale-105 transition-transform duration-300">
+      <p className="font-semibold text-sm md:text-base capitalize dark:text-white">
         {title.replace(/_/g, " ")}
       </p>
 
       <div className="flex flex-col gap-1">
-        <div className="h-1.5 bg-gray-4 rounded-full">
+        <div className="h-1.5 bg-gray-4 dark:bg-slate-700 rounded-full">
           <div
             className={`h-full rounded-full ${progress < 50 ? "bg-red-700" : "bg-blue-3"}`}
             style={{ width: `${progress}%` }}
           />
         </div>
-        <p className="text-xs text-gray-6">{progress}%</p>
+        <p className="text-xs text-gray-6 dark:text-slate-400">{progress}%</p>
       </div>
 
       <div className="flex items-center gap-2">
@@ -48,7 +48,7 @@ const TopicTile: React.FC<TopicTileProps> = ({
           type="button"
           onClick={onShowInsight}
           aria-label="Show insight"
-          className="p-1.5 rounded-md border border-gray-3 text-blue-3 hover:bg-blue-3/10 transition-colors"
+          className="p-1.5 rounded-md border border-gray-3 dark:border-slate-600 text-blue-3 hover:bg-blue-3/10 transition-colors"
         >
           <Lightbulb size={14} />
         </button>

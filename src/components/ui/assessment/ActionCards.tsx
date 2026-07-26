@@ -8,7 +8,7 @@ type ActionCardsProps = {
 };
 
 const cardClass =
-  "rounded-3xl border border-gray-3 bg-white p-5 flex items-center gap-4 text-left hover:scale-[1.02] hover:shadow-lg active:scale-95 transition-transform duration-300";
+  "rounded-3xl border border-gray-3 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 flex items-center gap-4 text-left hover:scale-[1.02] hover:shadow-lg active:scale-95 transition-transform duration-300";
 
 const ActionCards: React.FC<ActionCardsProps> = ({
   takeAssessmentTo,
@@ -22,8 +22,8 @@ const ActionCards: React.FC<ActionCardsProps> = ({
           <PlayCircle className="text-blue-3" size={20} />
         </div>
         <div>
-          <p className="font-semibold">Take Assessment</p>
-          <p className="text-xs text-gray-6">Start a new assessment</p>
+          <p className="font-semibold dark:text-white">Take Assessment</p>
+          <p className="text-xs text-gray-6 dark:text-slate-400">Start a new assessment</p>
         </div>
       </Link>
 
@@ -32,10 +32,10 @@ const ActionCards: React.FC<ActionCardsProps> = ({
           <Lightbulb className="text-blue-3" size={20} />
         </div>
         <div>
-          <p className="font-semibold">
+          <p className="font-semibold dark:text-white">
             {insightOpen ? "Hide your last results" : "Review Previous Insight"}
           </p>
-          <p className="text-xs text-gray-6">See how you performed last time</p>
+          <p className="text-xs text-gray-6 dark:text-slate-400">See how you performed last time</p>
         </div>
       </button>
     </div>

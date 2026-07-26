@@ -64,7 +64,7 @@ const SubjectPage = () => {
       )}
 
       {data.categories.length === 0 ? (
-        <p className="text-sm text-gray-6 text-center py-8">
+        <p className="text-sm text-gray-6 dark:text-slate-400 text-center py-8">
           No categories available yet for this subject.
         </p>
       ) : (

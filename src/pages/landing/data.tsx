@@ -86,35 +86,18 @@ export const features: Info[] = [
 
 export const teamMembers: TeamMemberType[] = [
   {
-    name: "Covenant Joshua",
-    role: "Lead Frontend Developer",
+    name: "Praise Olukiran",
+    role: "Full Stack Developer",
     job: "Fullstack Developer at Smart Systems Research Lab",
     img: ceejay,
-    linkedin: "https://www.linkedin.com/in/covenant-joshua-5080aa228/",
-    x: "https://x.com/daCodeFada",
   },
   {
-    name: "Covenant Joshua",
-    role: "Lead Frontend Developer",
+    name: "Nunsi Shiaki",
+    role: "AI Engineer",
     job: "Fullstack Developer at Smart Systems Research Lab",
     img: ceejay,
     linkedin: "https://www.linkedin.com/in/covenant-joshua-5080aa228/",
     x: "https://x.com/daCodeFada",
   },
-  {
-    name: "Covenant Joshua",
-    role: "Lead Frontend Developer",
-    job: "Fullstack Developer at Smart Systems Research Lab",
-    img: ceejay,
-    linkedin: "https://www.linkedin.com/in/covenant-joshua-5080aa228/",
-    x: "https://x.com/daCodeFada",
-  },
-  {
-    name: "Covenant Joshua",
-    role: "Lead Frontend Developer",
-    job: "Fullstack Developer at Smart Systems Research Lab",
-    img: ceejay,
-    linkedin: "https://www.linkedin.com/in/covenant-joshua-5080aa228/",
-    x: "https://x.com/daCodeFada",
-  },
+  
 ];

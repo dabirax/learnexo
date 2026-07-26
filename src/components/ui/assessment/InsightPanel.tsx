@@ -9,13 +9,13 @@ type InsightPanelProps = {
 
 const InsightPanel: React.FC<InsightPanelProps> = ({ isLoading, insight }) => {
   return (
-    <div className="rounded-3xl border border-gray-3 bg-white p-5 animate-in fade-in slide-in-from-bottom-4">
+    <div className="rounded-3xl border border-gray-3 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 animate-in fade-in slide-in-from-bottom-4">
       {isLoading ? (
         <div className="py-6 flex justify-center">
           <Spinner dark />
         </div>
       ) : !insight?.hasInsight ? (
-        <p className="text-sm text-gray-6 text-center py-4">
+        <p className="text-sm text-gray-6 dark:text-slate-400 text-center py-4">
           No previous assessment yet. Take an assessment to see insights here.
         </p>
       ) : (
@@ -31,12 +31,12 @@ const InsightPanel: React.FC<InsightPanelProps> = ({ isLoading, insight }) => {
             <div>
               <div className="flex items-center gap-2 text-green-1 mb-2">
                 <CheckCircle2 size={15} />
-                <h4 className="text-xs font-bold uppercase tracking-widest">
+                <h4 className="text-xs font-bold uppercase tracking-widest dark:text-white">
                   Strong Topics
                 </h4>
               </div>
               {insight.strongTopics.length ? (
-                <ul className="text-sm flex flex-col gap-1">
+                <ul className="text-sm flex flex-col gap-1 dark:text-slate-300">
                   {insight.strongTopics.map((t) => (
                     <li
                       key={t.topicInstanceId}
@@ -48,19 +48,19 @@ const InsightPanel: React.FC<InsightPanelProps> = ({ isLoading, insight }) => {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-gray-6">None yet</p>
+                <p className="text-sm text-gray-6 dark:text-slate-400">None yet</p>
               )}
             </div>
 
             <div>
               <div className="flex items-center gap-2 text-red-700 mb-2">
                 <AlertTriangle size={15} />
-                <h4 className="text-xs font-bold uppercase tracking-widest">
+                <h4 className="text-xs font-bold uppercase tracking-widest dark:text-white">
                   Weak Topics
                 </h4>
               </div>
               {insight.weakTopics.length ? (
-                <ul className="text-sm flex flex-col gap-1">
+                <ul className="text-sm flex flex-col gap-1 dark:text-slate-300">
                   {insight.weakTopics.map((t) => (
                     <li
                       key={t.topicInstanceId}
@@ -72,14 +72,14 @@ const InsightPanel: React.FC<InsightPanelProps> = ({ isLoading, insight }) => {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-gray-6">None yet</p>
+                <p className="text-sm text-gray-6 dark:text-slate-400">None yet</p>
               )}
             </div>
           </div>
 
           <div className="flex items-start gap-2 bg-blue-3/5 rounded-2xl p-4">
             <Lightbulb className="text-blue-3 shrink-0" size={18} />
-            <p className="text-sm text-blue-5">{insight.explanation}</p>
+            <p className="text-sm text-blue-5 dark:text-blue-300">{insight.explanation}</p>
           </div>
 
           {insight.aiContent && insight.aiContent.length > 0 && (
@@ -91,10 +91,10 @@ const InsightPanel: React.FC<InsightPanelProps> = ({ isLoading, insight }) => {
               {insight.aiContent.slice(0, 3).map((item) => (
                 <div
                   key={item.topic}
-                  className="rounded-2xl border border-gray-3 bg-white p-4 space-y-3"
+                  className="rounded-2xl border border-gray-3 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 space-y-3"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold capitalize text-slate-900">
+                    <span className="text-sm font-semibold capitalize text-slate-900 dark:text-white">
                       {item.topic.replace(/_/g, " ")}
                     </span>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-3/10 text-blue-3 font-bold uppercase">
@@ -103,14 +103,14 @@ const InsightPanel: React.FC<InsightPanelProps> = ({ isLoading, insight }) => {
                   </div>
 
                   {item.explanation?.summary && (
-                    <p className="text-xs text-gray-6 leading-relaxed">
+                    <p className="text-xs text-gray-6 dark:text-slate-400 leading-relaxed">
                       {item.explanation.summary}
                     </p>
                   )}
 
                   {item.resources?.videos && item.resources.videos.length > 0 && (
                     <div className="space-y-2">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-5">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-5 dark:text-slate-500">
                         Videos
                       </p>
                       <div className="flex flex-col gap-2">
@@ -133,7 +133,7 @@ const InsightPanel: React.FC<InsightPanelProps> = ({ isLoading, insight }) => {
 
                   {item.resources?.materials && item.resources.materials.length > 0 && (
                     <div className="space-y-2">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-5">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-5 dark:text-slate-500">
                         Reading Materials
                       </p>
                       <div className="flex flex-col gap-2">
