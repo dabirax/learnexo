@@ -43,7 +43,10 @@ const InsightPanel: React.FC<InsightPanelProps> = ({ isLoading, insight }) => {
                       className="capitalize flex justify-between gap-2"
                     >
                       <span>{t.name.replace(/_/g, " ")}</span>
-                      <span className="text-gray-6">{t.accuracy}%</span>
+                      <span className="text-gray-6">
+                        {t.accuracy}%
+                        <span className="text-emerald-600 ml-1">· {Math.round(t.bktProbability * 100)}% mastery</span>
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -67,7 +70,10 @@ const InsightPanel: React.FC<InsightPanelProps> = ({ isLoading, insight }) => {
                       className="capitalize flex justify-between gap-2"
                     >
                       <span>{t.name.replace(/_/g, " ")}</span>
-                      <span className="text-gray-6">{t.accuracy}%</span>
+                      <span className="text-gray-6">
+                        {t.accuracy}%
+                        <span className="text-emerald-600 ml-1">· {Math.round(t.bktProbability * 100)}% mastery</span>
+                      </span>
                     </li>
                   ))}
                 </ul>

@@ -40,8 +40,8 @@ export type ReportResponse = {
   subject: string;
   class: string;
   score: number;
-  weakTopics: { topicInstanceId: string; name: string; slug: string; accuracy: number }[];
-  strongTopics: { topicInstanceId: string; name: string; slug: string; accuracy: number }[];
+  weakTopics: { topicInstanceId: string; name: string; slug: string; accuracy: number; bktProbability: number }[];
+  strongTopics: { topicInstanceId: string; name: string; slug: string; accuracy: number; bktProbability: number }[];
   recommendedNextTopic: { name: string; accuracy: number };
   explanation: string;
   recommendations: { feedback: string; recommend_for: string; recommended_topic: string }[];

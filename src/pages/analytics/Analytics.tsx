@@ -10,10 +10,17 @@ import {
   LineChart,
   Line,
   Legend,
+  RadarChart,
+  Radar,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
 } from "recharts";
-import { getAnalytics } from "@/utils/queries/analytics";
-import { BarChart3, TrendingUp, GitCompare, BookOpen } from "lucide-react";
+import { getAnalytics, getBktTraces } from "@/utils/queries/analytics";
+import { BarChart3, TrendingUp, GitCompare, BookOpen, Radar as RadarIcon, Activity } from "lucide-react";
 import { useDocumentTitle } from "@/utils/hooks/useDocumentTitle";
+
+const TRACE_COLORS = ["#7c3aed", "#10b981", "#f59e0b", "#ef4444", "#3b82f6", "#ec4899", "#14b8a6", "#f97316"];
 
 const AnalyticsLoading = () => (
   <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] gap-6">
@@ -43,6 +50,11 @@ const Analytics = () => {
     queryFn: getAnalytics,
   });
 
+  const { data: tracesData } = useQuery({
+    queryKey: ["bktTraces"],
+    queryFn: getBktTraces,
+  });
+
   if (isLoading) return <AnalyticsLoading />;
   if (!data) return <EmptyState />;
 
@@ -55,6 +67,14 @@ const Analytics = () => {
 
   const topicComparisonSubjects = Object.keys(data.topicComparison).filter(
     (subject) => data.topicComparison[subject]?.length > 0
+  );
+
+  const categoryMasterySubjects = Object.keys(data.categoryMastery ?? {}).filter(
+    (subject) => data.categoryMastery[subject]?.length > 0
+  );
+
+  const traceSubjects = Object.keys(tracesData?.traces ?? {}).filter(
+    (subject) => tracesData!.traces[subject]?.length > 0
   );
 
   return (
@@ -85,6 +105,45 @@ const Analytics = () => {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {/* Category Mastery Profile — one radar per subject */}
+      {categoryMasterySubjects.map((subjectName) => {
+        const radarData = data.categoryMastery[subjectName].map((item) => ({
+          category: item.category.replace(/_/g, " "),
+          mastery: item.mastery,
+        }));
+
+        return (
+          <div key={`radar-${subjectName}`} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+            <div className="flex items-center gap-2 mb-6">
+              <RadarIcon size={20} className="text-violet-600" />
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white capitalize">
+                {subjectName} Mastery Profile
+              </h2>
+            </div>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="75%">
+                  <PolarGrid stroke="#e2e8f0" />
+                  <PolarAngleAxis dataKey="category" tick={{ fontSize: 12 }} className="capitalize" />
+                  <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 10 }} angle={90} />
+                  <Radar
+                    name="Mastery"
+                    dataKey="mastery"
+                    stroke="#7c3aed"
+                    fill="#7c3aed"
+                    fillOpacity={0.35}
+                  />
+                  <Tooltip
+                    formatter={(value) => [`${value}%`, "Mastery"]}
+                    contentStyle={{ borderRadius: "12px", border: "1px solid #e2e8f0" }}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        );
+      })}
 
       {/* Subject Progress Over Time */}
       {subjectNames.map((subjectName) => {
@@ -140,8 +199,8 @@ const Analytics = () => {
       {topicComparisonSubjects.map((subjectName) => {
         const topicData = data.topicComparison[subjectName].map((item) => ({
           topic: item.topic.replace(/_/g, " "),
-          previous: item.previousMastery,
           current: item.currentMastery,
+          mastery: Math.round(item.bktProbability * 100),
         }));
 
         return (
@@ -159,13 +218,87 @@ const Analytics = () => {
                   <XAxis dataKey="topic" tick={{ fontSize: 11 }} />
                   <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} label={{ value: "%", angle: -90, position: "insideLeft" }} />
                   <Tooltip
-                    formatter={(value, name) => [`${value}%`, name === "previous" ? "Previous Mastery" : "Last Assessment"]}
+                    formatter={(value, name) => {
+                      const labels: Record<string, string> = {
+                        current: "Last Assessment",
+                        mastery: "Mastery",
+                      };
+                      return [`${value}%`, labels[name as string] ?? (name as string)];
+                    }}
                     contentStyle={{ borderRadius: "12px", border: "1px solid #e2e8f0" }}
                   />
                   <Legend />
-                  <Bar dataKey="previous" fill="#94a3b8" radius={[4, 4, 0, 0]} name="Previous Mastery" />
                   <Bar dataKey="current" fill="#7c3aed" radius={[4, 4, 0, 0]} name="Last Assessment" />
+                  <Bar dataKey="mastery" fill="#10b981" radius={[4, 4, 0, 0]} name="Mastery" />
                 </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Mastery Growth — per-topic mastery curve over time */}
+      {traceSubjects.map((subjectName) => {
+        const topicTraces = tracesData!.traces[subjectName].map((t) => ({
+          ...t,
+          topic: t.topic.replace(/_/g, " "),
+        }));
+
+        const allDates = [
+          ...new Set(topicTraces.flatMap((t) => t.history.map((h) => h.date))),
+        ].sort();
+
+        const chartData = allDates.map((date) => {
+          const row: Record<string, string | number> = {
+            date: new Date(date).toLocaleDateString("en-NG", {
+              day: "numeric",
+              month: "short",
+            }),
+            fullDate: date,
+          };
+          topicTraces.forEach((t) => {
+            const point = t.history.find((h) => h.date === date);
+            if (point) row[t.topic] = point.mastery;
+          });
+          return row;
+        });
+
+        return (
+          <div key={`trace-${subjectName}`} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+            <div className="flex items-center gap-2 mb-6">
+              <Activity size={20} className="text-violet-600" />
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white capitalize">
+                {subjectName} Mastery Growth
+              </h2>
+            </div>
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+                  <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} label={{ value: "%", angle: -90, position: "insideLeft" }} />
+                  <Tooltip
+                    formatter={(value, name) => [`${value}%`, name]}
+                    labelFormatter={(label, payload) => {
+                      const item = payload?.[0]?.payload;
+                      return item?.fullDate || label;
+                    }}
+                    contentStyle={{ borderRadius: "12px", border: "1px solid #e2e8f0" }}
+                  />
+                  <Legend />
+                  {topicTraces.map((t, i) => (
+                    <Line
+                      key={t.topic}
+                      type="monotone"
+                      dataKey={t.topic}
+                      stroke={TRACE_COLORS[i % TRACE_COLORS.length]}
+                      strokeWidth={2.5}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 5 }}
+                      connectNulls
+                    />
+                  ))}
+                </LineChart>
               </ResponsiveContainer>
             </div>
           </div>

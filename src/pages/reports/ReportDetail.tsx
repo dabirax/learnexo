@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { getAssessmentReport } from "@/utils/queries/reports";
 import { ArrowLeft, Download, CheckCircle2, XCircle, BrainCircuit, Sparkles, BookOpen, FileText } from "lucide-react";
-import html2canvas from "html2canvas";
+import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
 import { toast } from "sonner";
 import { useDocumentTitle } from "@/utils/hooks/useDocumentTitle";
@@ -172,7 +172,10 @@ const ReportDetail = () => {
                       {data.strongTopics.map((topic) => (
                         <div key={topic.topicInstanceId} className="flex items-center justify-between">
                           <span className="text-green-700 text-sm capitalize">{topic.name.replace(/_/g, " ")}</span>
-                          <span className="text-green-800 font-semibold text-sm">{topic.accuracy}%</span>
+                          <span className="text-green-800 font-semibold text-sm">
+                            {topic.accuracy}%
+                            <span className="text-emerald-600 font-normal ml-1">· {Math.round(topic.bktProbability * 100)}% mastery</span>
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -185,7 +188,10 @@ const ReportDetail = () => {
                       {data.weakTopics.map((topic) => (
                         <div key={topic.topicInstanceId} className="flex items-center justify-between">
                           <span className="text-red-700 text-sm capitalize">{topic.name.replace(/_/g, " ")}</span>
-                          <span className="text-red-800 font-semibold text-sm">{topic.accuracy}%</span>
+                          <span className="text-red-800 font-semibold text-sm">
+                            {topic.accuracy}%
+                            <span className="text-emerald-600 font-normal ml-1">· {Math.round(topic.bktProbability * 100)}% mastery</span>
+                          </span>
                         </div>
                       ))}
                     </div>

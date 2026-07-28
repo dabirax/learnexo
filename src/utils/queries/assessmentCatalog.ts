@@ -51,6 +51,7 @@ export type InsightTopic = {
   name: string;
   slug: string;
   accuracy: number;
+  bktProbability: number;
 };
 
 export type AiContentItem = {
